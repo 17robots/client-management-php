@@ -14,7 +14,7 @@
   }
 
   // we need the project data that will be validated on the client side so everything we get here should be valid
-  public static function addInvoice($invoiceId) {
+  public static function addInvoice($invoiceData) {
 
   }
 

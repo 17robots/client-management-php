@@ -4,27 +4,27 @@
   // here we design the api portion that the user interacts with when they send the request over to the php file
 
   // for this function, we require a user id in order to get the books
-  public static function getProjects($userId) {
+  public static function getNotes($taskId) {
 
   }
 
   // for this one we can use this to get data for one project (useful for modals)
-  public static function getProject($projectId) {
+  public static function getNote($noteId) {
 
   }
 
   // we need the project data that will be validated on the client side so everything we get here should be valid
-  public static function addProject($projectData) {
+  public static function addNote($noteData) {
 
   }
 
   // here we need the data for the project and then we need the new data that we are going to update the record with (this will include all project data including the data we arent changing so we can copy it linearly)
-  public static function updateProject($projectId, $newProjectData) {
+  public static function updateNote($noteId, $newNoteData) {
 
   }
 
   // this needs the id and then we can delete it
-  public static function deleteProject($projectId) {
+  public static function deleteNote($noteId) {
 
   }
 ?>

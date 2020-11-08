@@ -6,11 +6,11 @@
     // creating
     public function findAll($options);
     public function findById($id);
-    public function save();
     
     // reading
     public static function create($options);
     public static function insertMany($options);
+    public function save();
 
     // updating
     public static function updateById($id, $newOptions);

@@ -35,8 +35,129 @@
     case "deleteProject":     
       deleteProject(1);
     break;
+    case "getClients":     
+      getClients(1);
+    break;
+    case "getClient":     
+      getClient(1);
+    break;
+    case "addClient":     
+      addClient(1);
+    break;
+    case "updateClient":     
+      updateClient(1,1);
+    break;
+    case "deleteClient":     
+      deleteClient(1);
+    break;
+    case "getContacts":     
+      getContacts(1);
+    break;
+    case "getContact":     
+      getContact(1);
+    break;
+    case "addClient":     
+      addClient(1);
+    break;
+    case "updateContact":     
+      updateContact(1,1);
+    break;
+    case "deleteContact":     
+      deleteContact(1);
+    break;
+    case "getInvoices":     
+      getInvoices(1);
+    break;
+    case "getInvoice":     
+      getInvoice(1);
+    break;
+    case "addInvoice":     
+      addInvoice(1);
+    break;
+    case "updateInvoice":     
+      updateInvoice(1,1);
+    break;
+    case "deleteInvoice":     
+      deleteInvoice(1);
+    break;
+    case "getMilestones":     
+      getMilestones(1);
+    break;
+    case "getMilestone":     
+      getMilestone(1);
+    break;
+    case "getMilestone":     
+      getMilestone(1);
+    break;
+    case "addMilestone":     
+      addMilestone(1);
+    break;
+    case "updateMilestone":     
+      updateMilestone(1,1);
+    break;
+    case "deleteMilestone":     
+      deleteMilestone(1);
+    break;
+    case "getNotes":     
+      getNotes(1);
+    break;
+    case "getNote":     
+      getNote(1);
+    break;
+    case "addNote":     
+      addNote(1);
+    break;
+    case "updateNote":     
+      updateNote(1,1);
+    break;
+    case "deleteNote":     
+      deleteNote(1);
+    break;
+    case "getPhones":     
+      getPhones(1);
+    break;
+    case "getPhone":     
+      getPhone(1);
+    break;
+    case "addPhone":     
+      addPhone(1);
+    break;
+    case "updatePhone":     
+      updatePhone(1,1);
+    break;
+    case "deletePhone":     
+      deletePhone(1);
+    break;
+    case "getTasks":     
+      getTasks(1);
+    break;
+    case "getTask":     
+      getTask(1);
+    break;
+    case "addTask":     
+      addTask(1);
+    break;
+    case "updateTask":     
+      updateTask(1,1);
+    break;
+    case "deleteTask":     
+      deleteTask(1);
+    break;
+    case "login":     
+      login(1,1);
+    break;
+    case "addUser":     
+      addUser(1);
+    break;
+    case "updateUser":     
+      updateUser(1,1);
+    break;
+    case "deleteUser":     
+      deleteUser(1);
+    break;
     default: 
       echo "Action Needs Specified";
     break;
+    
   }
 ?>

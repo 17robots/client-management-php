@@ -5,11 +5,11 @@
 
   // for this function, we require a user id in order to get the books
   public static function getContacts($clientId) {
-
+    
   }
 
   // for this one we can use this to get data for one project (useful for modals)
-  public static function geContact($contactId) {
+  public static function getContact($contactId) {
 
   }
 
