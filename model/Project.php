@@ -2,22 +2,30 @@
   require "./Model.php";
   public class Project extends Model {
     // members
-    
+    public $id;
+    public $createdAt;
+    public $creatorId;
+    public $clientId;
+    public $name;
+    public $description;
+    public $estimatedHours;
+    public $totalInvoiced;
+    public $rate;
+    public $paymentType; // fixed or hourly
+    public $dueDate;
+    public $closed;
+
     // creating
-    public function findAll($options);
-    public function findById($id);
     public function save();
     
     // reading
-    public static function create($options);
-    public static function insertMany($options);
+    public function findAll($options);
+    public function findById($id);
 
     // updating
     public static function updateById($id, $newOptions);
-    public static function updateMany($searchOptions, $newOptions);
 
     // deleting
     public static function deleteById($id);
-    public static function deleteMany($options);
   }
 ?>

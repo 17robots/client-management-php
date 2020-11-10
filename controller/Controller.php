@@ -9,8 +9,6 @@
   include_once("TaskController.php");
   include_once("UserController.php");
 
-  include_once("ProjectController.php");
-
   // consolidating all of the items into 1 file so that all we need to do is sent a request to 1 file and itll control and take care of everything
   // in our case, since this is just getting a request, we wont have to worry about displaying anything and we can just send a request back
   // so we dont need a controller class unless we wanted to be fancy with how we handled the responses
