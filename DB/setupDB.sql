@@ -1,6 +1,6 @@
 -- file for setting up the database and all of the related items
 
-drop schema if exits clientmanagement;
+drop schema if exists clientmanagement;
 
 create schema clientmanagement;
 
@@ -25,7 +25,7 @@ create table clients (
   id int not null AUTO_INCREMENT primary key,
   datecreated timestamp,
   creatorid int(11),
-  foreign key(creatorid) references users(id),
+  foreign key(creatorid) references users(id) on delete set null on update cascade,
   clientname varchar(255),
   clientaddress varchar(255),
   clientphone varchar(255),
@@ -36,9 +36,9 @@ create table projects (
   id int not null AUTO_INCREMENT primary key,
   datecreated timestamp,
   creatorid int(11),
-  foreign key (creatorid) references users(id),
+  foreign key (creatorid) references users(id) on delete set null on update cascade,
   clientid int(11),
-  foreign key (clientid) references clients(id),
+  foreign key (clientid) references clients(id) on delete set null on update cascade,
   projectname varchar(255),
   projectdescription text,
   estimatedhours float,
@@ -53,7 +53,7 @@ create table attachments (
   id int not null AUTO_INCREMENT primary key,
   datecreated timestamp,
   creatorid int(11),
-  foreign key(creatorid) references users(id),
+  foreign key(creatorid) references users(id) on delete set null on update cascade,
   filename varchar(255) COLLATE utf8_unicode_ci not null,
   uploadedon timestamp,
   status enum('1','0') COLLATE utf8_unicode_ci not null default '1'
@@ -63,9 +63,9 @@ create table contacts (
   id int not null AUTO_INCREMENT primary key,
   datecreated timestamp,
   creatorid int(11),
-  foreign key(creatorid) references users(id),
+  foreign key(creatorid) references users(id) on delete set null on update cascade,
   projectid int(11),
-  foreign key (projectid) references projects(id),
+  foreign key (projectid) references projects(id) on delete set null on update cascade,
   firstname varchar(255),
   lastname varchar(255),
   email varchar(255),
@@ -76,9 +76,9 @@ create table milestones (
   id int not null AUTO_INCREMENT primary key,
   datecreated timestamp,
   creatorid int(11),
-  foreign key(creatorid) references users(id),
+  foreign key(creatorid) references users(id) on delete set null on update cascade,
   projectid int(11),
-  foreign key (projectid) references projects(id),
+  foreign key (projectid) references projects(id) on delete set null on update cascade,
   milestonename varchar(255),
   datedue datetime
 ) engine=InnoDB;
@@ -87,11 +87,11 @@ create table tasks (
   id int not null AUTO_INCREMENT primary key,
   datecreated timestamp,
   creatorid int(11),
-  foreign key(creatorid) references users(id),
+  foreign key(creatorid) references users(id) on delete set null on update cascade,
   projectid int(11),
-  foreign key (projectid) references projects(id),
+  foreign key (projectid) references projects(id) on delete set null on update cascade,
   milestoneid int(11),
-  foreign key (milestoneid) references milestones(id),
+  foreign key (milestoneid) references milestones(id) on delete set null on update cascade,
   description text,
   completed boolean 
 ) engine=InnoDB;
