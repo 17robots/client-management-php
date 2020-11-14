@@ -11,7 +11,6 @@
       $servername = $settings['servername'];
       $username = $settings['username'];
       $password = $settings['password'];
-      $tblName = 'books';
     }
 
     public function open() {
