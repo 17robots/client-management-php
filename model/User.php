@@ -11,6 +11,7 @@
     public $password;
     
     // creating
+    // base level query: $sql = "INSERT INTO `users` (`id`, `datecreated`, `firstname`, `lastname`, `username`, `email`, `password`) VALUES (NULL, NOW(), \'Matt\', \'Dray\', \'mdray\', \'mdray@ameritech.net\', \'password\')";
     public function save();
     
     // reading

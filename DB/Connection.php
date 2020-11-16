@@ -1,20 +1,21 @@
 <?php
   public class Connection {
     private $servername;
+    private $dbname;
     private $username;
     private $password;
     private $connection;
-    private $tblName;
 
     function __construct() {
       $settings = json_decode(file_get_contents('../settings.json'), true);
       $servername = $settings['servername'];
       $username = $settings['username'];
       $password = $settings['password'];
+      $dbname = $settings['dbname'];
     }
 
     public function open() {
-      $connection = mysqli_connect($servername, $username, $password);
+      $connection = mysqli_connect($servername, $username, $password, $dbname);
       if(!$connection) {
         return false;
       }

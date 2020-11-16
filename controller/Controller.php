@@ -9,65 +9,76 @@
   include_once("TaskController.php");
   include_once("UserController.php");
 
-  // consolidating all of the items into 1 file so that all we need to do is sent a request to 1 file and itll control and take care of everything
-  // in our case, since this is just getting a request, we wont have to worry about displaying anything and we can just send a request back
-  // so we dont need a controller class unless we wanted to be fancy with how we handled the responses
-  // whats cool is we can send data back with the echo function and we can send json data back as well so we can even read things from a settings file 
-  // for this example ill only be focusing on the options above and I can create a second handler specifically for settings and use to load later
-  // the last thing here is the fact that we need to also send the type of action the form is tied to which we can do with a hidden form element
-
+  // set headers
   header("Access-Control-Allow-Origin: *");
-  switch($_POST['action']) {
+  header("Access-Control-Allow-Headers: access");
+  header("Access-Control-Allow-Methods: POST");
+  header("Content-Type: application/json; charset=UTF-8");
+  header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+
+  $data = json_decode(file_get_contents("php://input"));
+
+  switch($data->action) {
     case "getProjects":
-      getProjects(1);
+      getProjects($data->clientid);
     break;
-    case "getProject":   
-      getProject(1);
+    case "getProject":
+      getProject($data->projectid);
     break;
     case "addProject":
-      addProject(1);
+      addProject();
     break;
-    case "updateProject": 
-      updateProject(1,2);
+    case "updateProject":
+      updateProject();
     break;
-    case "deleteProject":     
-      deleteProject(1);
+    case "deleteProject":
+      deleteProject($data->projectid);
     break;
     case "getClients":     
-      getClients(1);
+      getClients($data->userid);
     break;
-    case "getClient":     
-      getClient(1);
+    case "getClient":
+      getClient($data->clientid);
     break;
-    case "addClient":     
-      addClient(1);
+    case "addClient":
+      $clientData[0] = $data->creatorid;
+      $clientData[1] = $data->clientName;
+      $clientData[2] = $data->clientAddress;
+      $clientData[3] = $data->clientPhone;
+      $clientData[4] = $data->clientEmail;
+      addClient($clientData);
     break;
-    case "updateClient":     
-      updateClient(1,1);
+    case "updateClient": 
+      $clientData[0] = $data->creatorid;
+      $clientData[1] = $data->clientName;
+      $clientData[2] = $data->clientAddress;
+      $clientData[3] = $data->clientPhone;
+      $clientData[4] = $data->clientEmail;
+      updateClient($data->updateid, $clientData);
     break;
-    case "deleteClient":     
-      deleteClient(1);
+    case "deleteClient":
+      deleteClient($data->clientid);
     break;
-    case "getContacts":     
-      getContacts(1);
+    case "getContacts":
+      getContacts($data->clientid);
     break;
-    case "getContact":     
-      getContact(1);
+    case "getContact":
+      getContact($data->contactid);
     break;
-    case "addClient":     
-      addClient(1);
+    case "addContact":
+      addContact(1);
     break;
-    case "updateContact":     
+    case "updateContact":
       updateContact(1,1);
     break;
-    case "deleteContact":     
-      deleteContact(1);
+    case "deleteContact":
+      deleteContact($data->contactid);
     break;
     case "getInvoices":     
-      getInvoices(1);
+      getInvoices($data->projectid);
     break;
-    case "getInvoice":     
-      getInvoice(1);
+    case "getInvoice":
+      getInvoice($data->invoiceid);
     break;
     case "addInvoice":     
       addInvoice(1);
@@ -75,17 +86,14 @@
     case "updateInvoice":     
       updateInvoice(1,1);
     break;
-    case "deleteInvoice":     
-      deleteInvoice(1);
+    case "deleteInvoice":  
+      deleteInvoice($data->invoiceid);
     break;
     case "getMilestones":     
-      getMilestones(1);
+      getMilestones($data->projectid);
     break;
-    case "getMilestone":     
-      getMilestone(1);
-    break;
-    case "getMilestone":     
-      getMilestone(1);
+    case "getMilestone":
+      getMilestone($data->milestoneid);
     break;
     case "addMilestone":     
       addMilestone(1);
@@ -93,68 +101,54 @@
     case "updateMilestone":     
       updateMilestone(1,1);
     break;
-    case "deleteMilestone":     
-      deleteMilestone(1);
-    break;
-    case "getNotes":     
-      getNotes(1);
-    break;
-    case "getNote":     
-      getNote(1);
-    break;
-    case "addNote":     
-      addNote(1);
-    break;
-    case "updateNote":     
-      updateNote(1,1);
-    break;
-    case "deleteNote":     
-      deleteNote(1);
+    case "deleteMilestone":  
+      deleteMilestone($data->milestoneid);
     break;
     case "getPhones":     
-      getPhones(1);
+      getPhones($data->contactid);
     break;
-    case "getPhone":     
-      getPhone(1);
+    case "getPhone":
+      getPhone($data->phoneid);
     break;
-    case "addPhone":     
+    case "addPhone":
       addPhone(1);
     break;
-    case "updatePhone":     
+    case "updatePhone":
       updatePhone(1,1);
     break;
     case "deletePhone":     
-      deletePhone(1);
+      deletePhone($data->phoneid);
     break;
-    case "getTasks":     
-      getTasks(1);
+    case "getTasks":
+      getTasks($data->projectid);
     break;
-    case "getTask":     
-      getTask(1);
+    case "getTask":
+      getTask($data->taskid);
     break;
-    case "addTask":     
+    case "addTask":
       addTask(1);
     break;
     case "updateTask":     
       updateTask(1,1);
     break;
     case "deleteTask":     
-      deleteTask(1);
+      deleteTask($data->taskid);
     break;
-    case "login":     
+    case "login":
       login(1,1);
     break;
-    case "addUser":     
+    case "addUser":
       addUser(1);
     break;
-    case "updateUser":     
+    case "updateUser":
       updateUser(1,1);
     break;
-    case "deleteUser":     
-      deleteUser(1);
+    case "deleteUser":
+      deleteUser($data->userid);
     break;
     default: 
-      echo "Action Needs Specified";
+      $msg['message'] = 'Action needs specified';
+      echo $msg;
     break;
     
   }
