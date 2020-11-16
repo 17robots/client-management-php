@@ -12,16 +12,22 @@
     public $overrideHours;
     
     // creating
-    public function save();
+    public function save() {
+      
+    }
     
     // reading
-    public function findAll($options);
-    public function findById($id);
+    public function findAll($options) {
 
-    // updating
-    public static function updateById($id, $newOptions);
+    }
+
+    public function findById($id) {
+
+    }
 
     // deleting
-    public static function deleteById($id);
+    public static function deleteById($id) {
+
+    }
   }
 ?>

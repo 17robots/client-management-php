@@ -1,27 +1,52 @@
-<?php
-  // "resolver" that controls what we can do with the projects
-  
-  // here we design the api portion that the user interacts with when they send the request over to the php file
-
-  // for this function, we require a user id in order to get the books
+<?php  
+  include_once('../model/User.php');
   public static function login($userInfo, $password) {
-
+    $userEmail = User::findAll({"email" => $userInfo, "password" => $password}));
+    $userUser = User::findAll({"email" => $userInfo, "password" => $password}));
+    $jsonString;
+    if(count($userEmail) != 1 || count($userUser) != 1) {
+      $jsonString = json_encode({"error" => "Incorrect Username Or Password"});
+    } else {
+      $authData["userId"] = $userEmail[0]->id;
+      $authData["token"] = 1; // figure out how to do token creation
+      $authData["tokenExpiration"] = 3600; // 1 hour
+      $jsonString = json_encode($authData);
+    }
+    echo $jsonString;
   }
 
-  // for this one we can use this to get data for one project (useful for modals)
-
-  // we need the project data that will be validated on the client side so everything we get here should be valid
   public static function addUser($userData) {
-
+    $newUser = User::ForInsert($userData[0], $userData[1], $userData[2], $userData[3], $userData[4]);
+    if($newUser->save()) {
+      $jsonString = json_encode($newUser);
+    } else {
+      $jsonString = json_encode({"error" => "Unable To Insert Into Database"});
+    }
+    echo $jsonString;
   }
 
-  // here we need the data for the project and then we need the new data that we are going to update the record with (this will include all project data including the data we arent changing so we can copy it linearly)
   public static function updateUser($userId, $newUserData) {
-
+    $userToEdit = User::findById($userId);
+    $jsonString;
+    if($userToEdit->id == -1) {
+      $jsonString = json_encode("error" => "Unable To Find Record");
+    } else {
+      if($userToEdit->save()) {
+        $jsonString = json_encode($userToEdit);
+      } else {
+        $jsonString = json_encode({"error" => "Unable To Update Database"});
+      }
+    }
+    echo $jsonString;
   }
 
-  // this needs the id and then we can delete it
   public static function deleteUser($userId) {
-
+    $jsonString;
+    if(User::deleteById($clientId)) {
+      $jsonString = json_encode("success" => "Successfully deleted");
+    } else {
+      $jsonString = json_encode("error" => "Error Deleting");
+    }
+    echo $jsonString;
   }
 ?>

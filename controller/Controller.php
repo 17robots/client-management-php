@@ -66,10 +66,22 @@
       getContact($data->contactid);
     break;
     case "addContact":
-      addContact(1);
+      $contactData[0] = $data->creatorId;
+      $contactData[1] = $data->projectId;
+      $contactData[2] = $data->firstname;
+      $contactData[3] = $data->lastname;
+      $contactData[4] = $data->email;
+      $contactData[5] = $data->mainContact;
+      addContact($contactData);
     break;
     case "updateContact":
-      updateContact(1,1);
+      $contactData[0] = $data->creatorId;
+      $contactData[1] = $data->projectId;
+      $contactData[2] = $data->firstname;
+      $contactData[3] = $data->lastname;
+      $contactData[4] = $data->email;
+      $contactData[5] = $data->mainContact;
+      updateContact($data->updateid,$contactData);
     break;
     case "deleteContact":
       deleteContact($data->contactid);
@@ -135,10 +147,15 @@
       deleteTask($data->taskid);
     break;
     case "login":
-      login(1,1);
+      login($data->userInfo,$data->password);
     break;
     case "addUser":
-      addUser(1);
+      $userData[0] = $data->firstName;
+      $userData[1] = $data->lastName;
+      $userData[2] = $data->userName
+      $userData[3] = $data->email;
+      $userData[4] = $data->password;
+      addUser($userData);
     break;
     case "updateUser":
       updateUser(1,1);

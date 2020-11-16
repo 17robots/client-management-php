@@ -7,11 +7,10 @@
     private $connection;
 
     function __construct() {
-      $settings = json_decode(file_get_contents('../settings.json'), true);
-      $servername = $settings['servername'];
-      $username = $settings['username'];
-      $password = $settings['password'];
-      $dbname = $settings['dbname'];
+      $servername = 'localhost';
+      $username = 'clientmanager';
+      $password = 'clientmanager';
+      $dbname = 'clientmanagement'
     }
 
     public function open() {

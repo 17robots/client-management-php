@@ -1,6 +1,5 @@
 <?php
   include_once("../DB/Connection.php");
-  require './database.php';
   class Client {
     public $id;
     public $creatorId;
@@ -60,7 +59,7 @@
       $result = msqli_query($conn->get_connection(), $sql);
       $returnedArr = array();
       while($row = mysqli_fetch_assoc($result)) {
-        array_push($returnedArr, Client::ForRead($row["id"], $row["datecreated"], $row["creatorid"], $row["maincontactid"], $row["clientname"], $row["clientaddress"], $row["clientphone"], $row["clientemail"]));
+        array_push($returnedArr, Client::ForRead($row["id"], $row["datecreated"], $row["creatorid"], $row["clientname"], $row["clientaddress"], $row["clientphone"], $row["clientemail"]));
       }
 
       $conn->close();
@@ -81,7 +80,7 @@
         $returnedClient = new Client();
       } else if(mysqli_num_rows($result) == 1) {
         $row = mysqli_fetch_assoc($result);
-        $returnedClient = Client::ForRead($row["id"], $row["datecreated"], $row["creatorid"], $row["maincontactid"], $row["clientname"], $row["clientaddress"], $row["clientphone"], $row["clientemail"]);
+        $returnedClient = Client::ForRead($row["id"], $row["datecreated"], $row["creatorid"], $row["clientname"], $row["clientaddress"], $row["clientphone"], $row["clientemail"]);
       }
       $conn->close();
       return $returnedClient;
@@ -96,7 +95,7 @@
       $conn->open();
       $result;
       $sql;
-      if($id == -1) { // not in db
+      if($this->id == -1) { // not in db
         $sql = "insert into clients(datecreated, creatorid, clientname, clientaddress, clientphone, clientemail) values(NOW(), " . $this->creatorId .", '" . $this->name ."', '"  . $this->address ."', '" . $this->clientPhone ."', '"  . $this->clientEmail ."')";
       }
       else {
@@ -118,7 +117,7 @@
 
       $sql = "DELETE FROM clients WHERE id = " . $id . ";";
 
-      $result = mysqli_query($connection->get_cnnection(), $sql);
+      $result = mysqli_query($connection->get_connection(), $sql);
       $conn->close();
       return $result;
     }
