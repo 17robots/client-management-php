@@ -1,0 +1,49 @@
+body
+{ 
+	background-color: #515252;
+}
+
+section#header
+{
+	color: #3091ff;
+	text-align: center;
+	padding-left: 160px;
+}
+
+.sidebar {
+	height: 100%;
+	width: 160px;
+	position: fixed;
+	background-color: blue;
+	padding-top: 10px;
+	left: 0;
+	top: 0;
+}
+
+.sidebar a {
+	padding: 6px 8px 6px 16px;
+	font-size: 25px;
+	color: lightgrey;
+	display: block;
+}
+
+.sidebar a:hover {
+	color: white;
+	cursor: pointer;
+}
+
+.main {
+	margin-left: 170px;
+	padding: 0px 10px;
+	color: #3091ff;
+}
+
+.main .instruction {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.main .documentation {
+	text-align: left;
+}
