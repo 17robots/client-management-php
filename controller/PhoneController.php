@@ -1,60 +1,57 @@
 <?php
-  // "resolver" that controls what we can do with the projects
-  
-  // here we design the api portion that the user interacts with when they send the request over to the php file
+  include_once('../model/Phone.php');
 
-  // for this function, we require a user id in order to get the books
-  public static function getPhones($contactId) {
-    $returnedPhone = json_encode(Phone::findAll({"creatorid" => $userId}));
+  public static function getPhones($data) {
+    $resultArray = Phone::findAll($data->options);
+    $jsonString = json_encode($resultArray);
+    echo $jsonString;
+  }
+
+  public static function getPhone($data) {
+    $returnedPhone = json_encode(Phone::findById($data->id));
     echo $returnedPhone;
   }
 
-  // for this one we can use this to get data for one project (useful for modals)
-  public static function getPhone($phoneId) {
-    $returnedPhone = json_encode(Phone::findById($clientId));
-    echo $returnedPhone;
-  }
-
-  // we need the project data that will be validated on the client side so everything we get here should be valid
-  public static function addPhone($phoneData) {
-    $newPhone = Phone::ForInsert($phoneData[0], $phoneData[1], $phoneData[2], $phoneData[3], $phoneData[4], $phoneData[5]);
+  public static function addPhone($data) {
+    $newPhone = Phone::ForInsert($data->creatorid, $data->contactid, $data->type, $data->number);
     if($newPhone->save()) {
       $jsonString = json_encode($newPhone);
-        if($jsonString != false)
-          echo $jsonString;
-        else
-          $jsonString = json_encode({"error" => "Failed to save"});
     } else {
-      $jsonString = json_encode({"error" => "Unable To Insert Into Database"});
+      $errorObj["error"] = "Unable to insert into database";
+      $jsonString = json_encode($errorObj);
     }
     echo $jsonString;
   }
 
-  // here we need the data for the project and then we need the new data that we are going to update the record with (this will include all project data including the data we arent changing so we can copy it linearly)
-  public static function updatePhone($phoneId, $newPhoneData) {
-    $phoneToEdit = Phone::findById($clientId);
+  public static function updatePhone($data) {
+    $phoneToEdit = Phone::findById($data->id);
     $jsonString;
     if($phoneToEdit->id == -1) { // we couldnt find the client
-      $jsonString = json_encode("error" => "Unable To Find Record");
+      $errorObj["error"] = "Unable to Find Record";
+      $jsonString = json_encode($errorObj);
     } else {
+      $phoneToEdit->contactId = $data->contactid;
+      $phoneToEdit->type = $data->type;
+      $phoneToEdit->number = $data->number;
       if($phoneToEdit->save()) {
-        $jsonString = json_encode($phoneToEdit);
+        $jsonString = json_encode($data);
       } else {
-        $jsonString = json_encode({"error" => "Unable To Update Database"});
+        $errorObj["error"] = "Unable to Update Database";
+        $jsonString = json_encode($errorObj);
       }
     }
     echo $jsonString;
   }
 
-  // this needs the id and then we can delete it
-  public static function deleteProject($phoneId) {
+  public static function deleteProject($data) {
     $jsonString;
     if(Phone::deleteById($clientId)) {
-      $jsonString = json_encode("success" => "Successfully deleted");
+      $successObj["success"] = "successfully deleted";
+      $jsonString = json_encode($successObj);
     } else {
-      $jsonString = json_encode("error" => "Error Deleting");
+      $errorObj["error"] = "Unable to delete from database";
+      $jsonString = json_encode($errorObj);
     }
     echo $jsonString;
-
   }
 ?>

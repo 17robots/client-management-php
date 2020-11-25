@@ -1,61 +1,56 @@
 <?php
-  // "resolver" that controls what we can do with the projects
-  
-  // here we design the api portion that the user interacts with when they send the request over to the php file
+  include_once('../model/Milestone.php');
 
-  // for this function, we require a user id in order to get the books
-  public static function getMilestones($projectId) {
-    $resultArray = json_encode(Milestone::findAll({"projectid" => $projectId}));
-    echo $resultArray;
-
+  function getMilestones($data) {
+    $resultArray = Milestone::findAll($data->options);
+    $jsonString = json_encode($resultArray);
+    echo $jsonString;
   }
 
-  // for this one we can use this to get data for one project (useful for modals)
-  public static function getMilestone($milestoneId) {
-    $returnedMilestone = json_encode(Milestone::findById($clientId));
- echo $returnedContact;
-
+  function getMilestone($data) {
+    $returnedMilestone = json_encode(Milestone::findById($data->id));
+    echo $returnedMilestone;
   }
 
-  // we need the project data that will be validated on the client side so everything we get here should be valid
-  public static function addMilestone($milestoneData) {
-    $newMilestone = Milestone::ForInsert($milestoneData[0], $milestoneData[1], $milestoneData[2], $milestoneData[3], $milestoneData[4], $milestoneData[5]);
+  function addMilestone($data) {
+    $newMilestone = Milestone::ForInsert($data->creatorid, $data->projectid, $data->milestonename, $data->datedue);
     if($newMilestone->save()) {
       $jsonString = json_encode($newMilestone);
-        if($jsonString != false)
-          echo $jsonString;
-        else
-          $jsonString = json_encode({"error" => "Failed to save"});
     } else {
-      $jsonString = json_encode({"error" => "Unable To Insert Into Database"});
+      $errorObj["error"] = "Unable to insert into database";
+      $jsonString = json_encode($errorObj);
     }
     echo $jsonString;
   }
 
-  // here we need the data for the project and then we need the new data that we are going to update the record with (this will include all project data including the data we arent changing so we can copy it linearly)
-  public static function updateMilestone($milestoneId, $newMilestoneData) {
-    $milestoneToEdit = Contact::findById($clientId);
+  function updateMilestone($data) {
+    $milestoneToEdit = Contact::findById($data->id);
     $jsonString;
     if($milestoneToEdit->id == -1) { // we couldnt find the milestone
-      $jsonString = json_encode("error" => "Unable To Find Record");
+      $errorObj["error"] = "Unable to Find Record";
+      $jsonString = json_encode($errorObj);
     } else {
+      $milestoneToEdit->projectId = $data->projectid;
+      $milestoneToEdit->milestonename = $data->milestonename;
+      $milestoneToEdit->datedue = $data->datedue;
       if($milestoneToEdit->save()) {
         $jsonString = json_encode($milestoneToEdit);
       } else {
-        $jsonString = json_encode({"error" => "Unable To Update Database"});
+        $errorObj["error"] = "Unable to Update Database";
+        $jsonString = json_encode($errorObj);
       }
     }
     echo $jsonString;
   }
-  }
 
-  // this needs the id and then we can delete it
-  public static function deleteMilestone($milestoneId) {
+  function deleteMilestone($milestoneId) {
     $jsonString;
     if(Milestone::deleteById($clientId)) {
-      $jsonString = json_encode("success" => "Successfully deleted");
+      $successObj["success"] = "successfully deleted";
+      $jsonString = json_encode($successObj);
     } else {
-      $jsonString = json_encode("error" => "Error Deleting");
+      $errorObj["error"] = "Unable to delete from database";
+      $jsonString = json_encode($errorObj);
     }
     echo $jsonString;
   }

@@ -1,47 +1,58 @@
 <?php  
   include_once('../model/Client.php');
 
-  public function getClients($userId) {
-    $resultArray = json_encode(Client::findAll({"creatorid" => $userId}));
-    echo $resultArray;
+  function getClients($data) {
+    $resultArray = Client::findAll($data->options);
+    $jsonString = json_encode($resultArray);
+    echo $jsonString;
   }
 
-  public function getClient($clientId) {
-    $returnedClient = json_encode(Client::findById($clientId));
+  function getClient($data) {
+    $returnedClient = json_encode(Client::findById($data->id));
     echo $returnedClient;
   }
 
-  public function addClient($clientData) {
-    $newClient = Client::ForInsert($clientData[0], $clientData[1], $clientData[2], $clientData[3], $clientData[4]);
+  function addClient($data) {
+    $jsonString;
+    $newClient = Client::ForInsert($data->creatorid, $data->clientName;, $data->clientAddress, $data->clientPhone, $data->clientEmail);
     if($newClient->save()) {
       $jsonString = json_encode($newClient);
     } else {
-      $jsonString = json_encode({"error" => "Unable To Insert Into Database"});
+      $errorObj["error"] = "Unable to insert into database";
+      $jsonString = json_encode($errorObj);
     }
     echo $jsonString;
   }
 
-  public function updateClient($clientId, $newclientData) {
-    $clientToEdit = Client::findById($clientId);
+  function updateClient($data) {
+    $clientToEdit = Client::findById($data->id);
     $jsonString;
     if($clientToEdit->id == -1) { // we couldnt find the client
-      $jsonString = json_encode("error" => "Unable To Find Record");
+      $errorObj["error"] = "Unable to Find Record";
+      $jsonString = json_encode($errorObj);
     } else {
+      $clientToEdit->clientName = $data->clientName;
+      $clientToEdit->clientAddress = $data->clientAddress;
+      $clientToEdit->clientPhone = $data->clientPhone;
+      $clientToEdit->clientEmail = $data->clientEmail;
       if($clientToEdit->save()) {
         $jsonString = json_encode($clientToEdit);
       } else {
-        $jsonString = json_encode({"error" => "Unable To Update Database"});
+        $errorObj["error"] = "Unable to Update Database";
+        $jsonString = json_encode($errorObj);
       }
     }
     echo $jsonString;
   }
 
-  public function deleteClient($clientId) {
+  function deleteClient($data) {
     $jsonString;
-    if(Client::deleteById($clientId)) {
-      $jsonString = json_encode("success" => "Successfully deleted");
+    if(Client::deleteById($data->id)) {
+      $successObj["success"] = "successfully deleted";
+      $jsonString = json_encode($successObj);
     } else {
-      $jsonString = json_encode("error" => "Error Deleting");
+      $errorObj["error"] = "Unable to delete from database";
+      $jsonString = json_encode($errorObj);
     }
     echo $jsonString;
   }

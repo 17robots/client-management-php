@@ -10,27 +10,22 @@
       $servername = 'localhost';
       $username = 'clientmanager';
       $password = 'clientmanager';
-      $dbname = 'clientmanagement'
+      $dbname = 'clientmanagement';
+      $this->connection = new mysqli($this->servername, $this->username, $this->password, $this->dbName);
+      if($this->connection->connect_error) {
+        echo $this->connection->connect_error; 
+      }
     }
 
     public function open() {
-      $connection = mysqli_connect($servername, $username, $password, $dbname);
-      if(!$connection) {
-        return false;
-      }
-      return true;
+    }
+
+    public function query($sql) {
+      return $this->connection->query($sql);
     }
 
     public function close() {
       mysqli_close($connection);
-    }
-
-    public function get_connection() {
-      return $connection;
-    }
-
-    public function get_table() {
-      return $tblName;
     }
   }
 ?>

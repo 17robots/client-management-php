@@ -92,21 +92,9 @@ create table tasks (
   foreign key (projectid) references projects(id) on delete set null on update cascade,
   milestoneid int(11),
   foreign key (milestoneid) references milestones(id) on delete set null on update cascade,
+  title varchar(255),
   description text,
-  completed boolean 
-) engine=InnoDB;
-
-create table events (
-  id int not null AUTO_INCREMENT primary key,
-  datecreated timestamp,
-  creatorid int(11),
-  foreign key(creatorid) references users(id),
-  taskid int(11),
-  foreign key (taskid) references tasks(id),
-  summary varchar(255),
-  notes text,
-  finishedtime timestamp,
-  overridehours float
+  completed boolean
 ) engine=InnoDB;
 
 create table phones (

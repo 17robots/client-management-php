@@ -53,12 +53,13 @@
       $result;
       $sql;
       if($this->id == -1) {
-        $sql = "insert into contacts(datecreated, creatorid, projectid, firstname, lastname, email, maincontact) values (NOW(), ".$this->creatorId.", ".$this->projectId.", '".$this->firstname."', '".$this->lastname."', '".$this->email."', ".$this->maincontact.");";
+        $sql = "insert into contacts(datecreated, creatorid, projectid, firstname, lastname, email, maincontact) values (NOW(), $this->creatorId, $this->projectId, '$this->firstname', '$this->lastname', '$this->email', $this->maincontact);";
       } else {
-        $sql = "update contacts set creatorid = ".$this->creatorId.", projectid = ".$this->projectId.", firstname = '".$this->firstname."', lastname = '".$this->lastname."', email = '".$this->email."', maincontact = ".$this->maincontact." where id =".$this->id.";";
+        $sql = "update contacts set creatorid = $this->creatorId, projectid = $this->projectId, firstname = '$this->firstname', lastname = '$this->lastname', email = '$this->email', maincontact = $this->maincontact where id =$this->id;";
       }
 
-      $result = mysqli_query($conn->get_connection(), $sql);
+      $result = $conn->query($sql);
+      if($result && $this->id == -1) $this->id = $conn->connection->insert_id;
       $conn->close();
       return $result;
     }
@@ -66,19 +67,28 @@
     // reading
     public function findAll($options) {
       $conn = new Connection();
-      $conn->open();
-
-      $sql = 'SELECT * FROM contacts ';
+      $sql = 'SELECT * FROM contacts';
 
       foreach($options as $key => $value) {
-        if(property_exists('Client', $key))
-          if($key == array_key_last($options))
-            $sql += ' WHERE ' . $key . ' = ' . $value;
-          else
-            $sql += ' WHERE ' . $key . ' = ' . $value . ' AND ';
+        if(property_exists('Contact', $key))
+          if($key == array_key_last($options)) {
+            if(is_numeric($value)) {
+              $sql .= " WHERE $key = $value";
+            } else {
+              $sql .= " WHERE $key = '$value'";
+            }
+          } else {
+            if(is_numeric($value)) {
+              $sql .= " WHERE $key = $value AND";
+            } else {
+              $sql .= " WHERE $key = '$value' AND";
+            }
+          }
       }
 
-      $result = msqli_query($conn->get_connection(), $sql);
+      $sql .= ' ORDER BY ID';
+
+      $result = $conn->query($sql);
       $returnedArr = array();
       while($row = mysqli_fetch_assoc($result)) {
         array_push($returnedArr, Contact::ForRead($row["id"], $row["datecreated"], $row["creatorid"], $row["projectid"], $row["firstname"], $row["lastname"], $row["email"], $row["maincontact"]));
@@ -88,17 +98,17 @@
 
       return $returnedArr;
     }
+
     public function findById($id) {
       $returnedContact;
       $conn = new Connection();
-      $conn->open();
-      $sql = "SELECT * FROM contacts WHERE id = " . $id . ';';
-      $result = mysqli_query($conn->get_connection(), $sql);
+      $sql = "SELECT * FROM contacts WHERE id = $id;";
+      $result = $conn->query($sql);
 
       if(mysqli_num_rows($result) > 1) {
         $returnedContact = new Contact();
       } else if(mysqli_num_rows($result) == 1) {
-        $row = mysqli_fetch_assoc($result);
+        $row = $result->fetch_assoc();
         $returnedContact = Contact::ForRead($row["id"], $row["datecreated"], $row["creatorid"], $row["projectid"], $row["firstname"], $row["lastname"], $row["email"], $row["maincontact"]);
       }
       $conn->close();
@@ -110,9 +120,9 @@
       $conn = new Connection();
       $conn->open();
 
-      $sql = "DELETE FROM clients WHERE id = " . $id . ";";
+      $sql = "DELETE FROM contacts WHERE id = $id;";
 
-      $result = mysqli_query($connection->get_connection(), $sql);
+      $result = $conn->query($sql);
       $conn->close();
       return $result;
     }

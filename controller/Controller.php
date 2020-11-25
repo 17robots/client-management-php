@@ -20,153 +20,111 @@
 
   switch($data->action) {
     case "getProjects":
-      getProjects($data->clientid);
+      getProjects($data);
     break;
     case "getProject":
-      getProject($data->projectid);
+      getProject($data);
     break;
     case "addProject":
-      addProject();
+      addProject($data);
     break;
     case "updateProject":
-      updateProject();
+      updateProject($data);
     break;
     case "deleteProject":
-      deleteProject($data->projectid);
+      deleteProject($data);
     break;
     case "getClients":     
-      getClients($data->userid);
+      getClients($data);
     break;
     case "getClient":
-      getClient($data->clientid);
+      getClient($data);
     break;
     case "addClient":
-      $clientData[0] = $data->creatorid;
-      $clientData[1] = $data->clientName;
-      $clientData[2] = $data->clientAddress;
-      $clientData[3] = $data->clientPhone;
-      $clientData[4] = $data->clientEmail;
-      addClient($clientData);
+      addClient($data);
     break;
     case "updateClient": 
-      $clientData[0] = $data->creatorid;
-      $clientData[1] = $data->clientName;
-      $clientData[2] = $data->clientAddress;
-      $clientData[3] = $data->clientPhone;
-      $clientData[4] = $data->clientEmail;
-      updateClient($data->updateid, $clientData);
+      updateClient($data);
     break;
     case "deleteClient":
-      deleteClient($data->clientid);
+      deleteClient($data);
     break;
     case "getContacts":
-      getContacts($data->clientid);
+      getContacts($data);
     break;
     case "getContact":
-      getContact($data->contactid);
+      getContact($data);
     break;
     case "addContact":
-      $contactData[0] = $data->creatorId;
-      $contactData[1] = $data->projectId;
-      $contactData[2] = $data->firstname;
-      $contactData[3] = $data->lastname;
-      $contactData[4] = $data->email;
-      $contactData[5] = $data->mainContact;
-      addContact($contactData);
+      addContact($data);
     break;
     case "updateContact":
-      $contactData[0] = $data->creatorId;
-      $contactData[1] = $data->projectId;
-      $contactData[2] = $data->firstname;
-      $contactData[3] = $data->lastname;
-      $contactData[4] = $data->email;
-      $contactData[5] = $data->mainContact;
-      updateContact($data->updateid,$contactData);
+      updateContact($data);
     break;
     case "deleteContact":
-      deleteContact($data->contactid);
-    break;
-    case "getInvoices":     
-      getInvoices($data->projectid);
-    break;
-    case "getInvoice":
-      getInvoice($data->invoiceid);
-    break;
-    case "addInvoice":     
-      addInvoice(1);
-    break;
-    case "updateInvoice":     
-      updateInvoice(1,1);
-    break;
-    case "deleteInvoice":  
-      deleteInvoice($data->invoiceid);
+      deleteContact($data);
     break;
     case "getMilestones":     
-      getMilestones($data->projectid);
+      getMilestones($data);
     break;
     case "getMilestone":
-      getMilestone($data->milestoneid);
+      getMilestone($data);
     break;
     case "addMilestone":     
-      addMilestone(1);
+      addMilestone($data);
     break;
     case "updateMilestone":     
-      updateMilestone(1,1);
+      updateMilestone($data);
     break;
     case "deleteMilestone":  
-      deleteMilestone($data->milestoneid);
+      deleteMilestone($data);
     break;
     case "getPhones":     
-      getPhones($data->contactid);
+      getPhones($data);
     break;
     case "getPhone":
-      getPhone($data->phoneid);
+      getPhone($data);
     break;
     case "addPhone":
-      addPhone(1);
+      addPhone($data);
     break;
     case "updatePhone":
-      updatePhone(1,1);
+      updatePhone($data);
     break;
     case "deletePhone":     
-      deletePhone($data->phoneid);
+      deletePhone($data);
     break;
     case "getTasks":
-      getTasks($data->projectid);
+      getTasks($data);
     break;
     case "getTask":
-      getTask($data->taskid);
+      getTask($data);
     break;
     case "addTask":
-      addTask(1);
+      addTask($data);
     break;
     case "updateTask":     
-      updateTask(1,1);
+      updateTask($data);
     break;
     case "deleteTask":     
-      deleteTask($data->taskid);
+      deleteTask($data);
     break;
     case "login":
-      login($data->userInfo,$data->password);
+      login($data);
     break;
     case "addUser":
-      $userData[0] = $data->firstName;
-      $userData[1] = $data->lastName;
-      $userData[2] = $data->userName
-      $userData[3] = $data->email;
-      $userData[4] = $data->password;
-      addUser($userData);
+      addUser($data);
     break;
     case "updateUser":
-      updateUser(1,1);
+      updateUser($data);
     break;
     case "deleteUser":
-      deleteUser($data->userid);
+      deleteUser($data);
     break;
     default: 
-      $msg['message'] = 'Action needs specified';
-      echo $msg;
+      $errorObj["error"] = "Action Needed";
+      $jsonString = json_encode($errorObj);
+      echo $jsonString;
     break;
-    
   }
 ?>

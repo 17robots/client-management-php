@@ -1,34 +1,64 @@
 <?php
-  // we need the project model to be able to do anything
   include_once("../model/Project.php");
 
-  // "resolver" that controls what we can do with the projects
-  
-  // here we design the api portion that the user interacts with when they send the request over to the php file
-
-  // for this function, we require a user id in order to get the books
-  function getProjects($userId) {
-    echo "getting projects with ", $userId, " as data ";
+  function getProjects($data) {
+    $resultArray = Project::findAll($data->options);
+    $jsonString = json_encode($resultArray);
+    echo $jsonString;
   }
 
-  // for this one we can use this to get data for one project (useful for modals)
-  function getProject($projectId) {
-    echo "getting project with ", $projectId, " as data ";
+  function getProject($data) {
+    $returnedClient = json_encode(Project::findById($data->id));
+    echo $returnedClient;
   }
 
-  // we need the project data that will be validated on the client side so everything we get here should be valid
-  function addProject($projectData) {
-    echo "adding project with ", $projectData, " as data ";
-
+  function addProject($data) {
+    $jsonString;
+    $newProject = Project::ForInsert($data->creatorid, $data->clientid, $data->name, $data->description, $data->estimatedhours, $data->rate, $data->duedate, $data->closed);
+    if($newProject->save()) {
+      $jsonString = json_encode($newProject);
+    } else {
+      $errorObj["error"] = "Unable to insert into database";
+      $jsonString = json_encode($errorObj);
+    }
+    echo $jsonString;
   }
 
-  // here we need the data for the project and then we need the new data that we are going to update the record with (this will include all project data including the data we arent changing so we can copy it linearly)
-  function updateProject($projectId, $newProjectData) {
-    echo "updating project with ", $projectId, ' ', $newProjectData, " as data ";
+  function updateProject($data) {
+    $projectToEdit = Project::findById($data->id);
+    $jsonString;
+    f($projectToEdit->id == -1) { // we couldnt find the client
+      $errorObj["error"] = "Unable to Find Record";
+      $jsonString = json_encode($errorObj);
+    } else {
+      $projectToEdit->clientId = $data->clientid;
+      $projectToEdit->name = $data->name;
+      $projectToEdit->description = $data->description;
+      $project->estimatedHours = $data->estimatedhours;
+      $projectToEdit->rate = $data->rate;
+      $projectToEdit->paymentType = $data->paymenttype;
+      $projectToEdit->totalInvoiced = $data->totalInvoiced;
+      $projectToEdit->dueDate = $data->dueDate;
+      $projectToEdit->closed = $data->closed;
+      if($projectToEdit->save()) {
+        $jsonString = json_encode($projectToEdit);
+      } else {
+        $errorObj["error"] = "Unable to Update Database";
+        $jsonString = json_encode($errorObj);
+      }
+    }
+    echo $jsonString;
   }
 
-  // this needs the id and then we can delete it
-  function deleteProject($projectId) {
-    echo "deleting project with ", $projectId, ' ', $newProjectData, " as data ";
+  function deleteProject($data) {
+    $jsonString;
+    if(Project::deleteById($data->id)) {
+      $successObj["success"] = "successfully deleted";
+      $jsonString = json_encode($successObj);
+    } else {
+      $errorObj["error"] = "Unable to delete from database";
+      $jsonString = json_encode($errorObj);
+    }
+    echo $jsonString;
   }
 ?>

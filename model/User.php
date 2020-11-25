@@ -1,7 +1,6 @@
 <?php
   require "./Model.php";
   public class User extends Model {
-    // members
     public $id;
     public $datecreated;
     public $firstname;
@@ -27,6 +26,7 @@
       $instance->username = $username;
       $instance->email = $email;
       $instance->password = $password;
+      return $instance;
     }
 
     public static function ForRead($id, $datecreated, $firstname, $lastname, $username, $email, $password) {
@@ -36,19 +36,18 @@
       $instance->username = $username;
       $instance->email = $email;
       $instance->password = $password;
+      return $instance;
     }
 
-    // creating
-    // base level query: $sql = "INSERT INTO `users` (`id`, `datecreated`, `firstname`, `lastname`, `username`, `email`, `password`) VALUES (NULL, NOW(), \'Matt\', \'Dray\', \'mdray\', \'mdray@ameritech.net\', \'password\')";
     public function save() {
       $conn = new Connection();
       $conn->open();
       $result;
       $sql;
       if($this->id == -1) {
-        $sql = "insert into users (datecreated, firstname, lastname, username, email, password) VALUES (NOW(), '".$this->firstname."', '".$this->lastname."', '".$this->username."', '".$this->email."', '".$this->password."')";
+        $sql = "insert into users (datecreated, firstname, lastname, username, email, password) VALUES (NOW(), '$this->firstname', '$this->lastname', '$this->username', '$this->email', '$this->password')";
       } else {
-        $sql = "update users set firstname = '".$this->firstname."', lastname ='".$this->lastname."', username = '".$this->username."', email = '".$this->email."', password = '".$this->password."' where id = ".$this->id.";";
+        $sql = "update users set firstname = '$this->firstname', lastname ='$this->lastname', username = '$this->username', email = '$this->email', password = '$this->password' where id = $this->id;";
       }
 
       $result = mysqli_query($conn->get_connection(), $sql);
@@ -56,25 +55,35 @@
       return $result;
     }
     
-    // reading
     public function findAll($options) {
       $conn = new Connection();
       $conn->open();
 
-      $sql = 'SELECT * FROM contacts ';
+      $sql = 'SELECT * FROM users ';
 
       foreach($options as $key => $value) {
-        if(property_exists('Client', $key))
-          if($key == array_key_last($options))
-            $sql += ' WHERE ' . $key . ' = ' . $value;
-          else
-            $sql += ' WHERE ' . $key . ' = ' . $value . ' AND ';
+        if(property_exists('User', $key))
+          if($key == array_key_last($options)) {
+            if(is_numeric($value)) {
+              $sql .= " WHERE $key = $value";
+            } else {
+              $sql .= " WHERE $key = '$value'";
+            }
+          } else {
+            if(is_numeric($value)) {
+              $sql .= " WHERE $key = $value AND";
+            } else {
+              $sql .= " WHERE $key = '$value' AND";
+            }
+          }
       }
 
-      $result = msqli_query($conn->get_connection(), $sql);
+      $sql .= ' ORDER BY ID';
+
+      $result = $conn->query($sql);
       $returnedArr = array();
-      while($row = mysqli_fetch_assoc($result)) {
-        array_push($returnedArr, User::ForRead($row["id"], $row["datecreated"], $row["firstname"], $row["lastname"], $row["username"], $row["email"], $row["password"], $row["maincontact"]));
+      while($row = $result->fetch_assoc()) {
+        array_push($returnedArr, User::ForRead($row["id"], $row["datecreated"], $row["firstname"], $row["lastname"], $row["username"], $row["email"], $row["password"]));
       }
 
       $conn->close();
@@ -92,21 +101,20 @@
       if(mysqli_num_rows($result) > 1) {
         $returnedUser = new User();
       } else if(mysqli_num_rows($result) == 1) {
-        $row = mysqli_fetch_assoc($result);
-        $returnedUser = User::ForRead($row["id"], $row["datecreated"], $row["firstname"], $row["lastname"], $row["username"], $row["email"], $row["password"], $row["maincontact"]);
+        $row = $result->fetch_assoc();
+        $returnedUser = User::ForRead($row["id"], $row["datecreated"], $row["firstname"], $row["lastname"], $row["username"], $row["email"], $row["password"]);
       }
       $conn->close();
       return $returnedUser;
     }
 
-    // deleting
     public static function deleteById($id) {
       $conn = new Connection();
       $conn->open();
 
-      $sql = "DELETE FROM users WHERE id = " . $id . ";";
+      $sql = "DELETE FROM users WHERE id = $id;";
 
-      $result = mysqli_query($connection->get_connection(), $sql);
+      $result = $conn->query($sql);
       $conn->close();
       return $result;
     }
