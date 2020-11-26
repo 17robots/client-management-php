@@ -66,6 +66,16 @@ section#header
 	text-align: left;
 }
 
+.main .documentation a{
+	font-size: 15px;
+	color: #3091ff
+}
+
+.main .documentation a:hover{
+	color: lightblue;
+	cursor: pointer;
+}
+
 .modal {
   display: none;
   position: fixed;
@@ -105,4 +115,3 @@ section#header
 	color: #3091ff;
 	text-align: center;
 }
-
