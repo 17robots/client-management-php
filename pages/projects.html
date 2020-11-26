@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title> ISP Final Project </title>
+	<link rel = "stylesheet" href="styles.css">
+</head>
+
+<body>
+	<section id="header">
+		<h1> Projects </h1>
+		<hr>
+	</section>
+
+	<div class="sidebar">
+		<a href="homePage.html">Home</a>
+		<a href="projects.html">Projects</a>
+  		<a href="clients.html">Clients</a>
+  		<a href="contacts.html">Contacts</a>
+	</div>
+
+	<div class="main">
+		This is where we will put the stuff for the projects
+                <button id="modalBtn">PROJECT MODAL TEST</button>
+
+                  <div id="myModal" class="modal">
+                     <div class="modal-content">
+                        <span class="close">&times;</span>
+                        <p style="text-align: center">PROJECT TEST</p>
+                        <table>
+                         <tr>
+                           <th> id </th>
+                           <th> datecreated </th>
+                           <th> creatorid </th>
+                           <th> clientid </th>
+                           <th> projectname </th>
+                           <th> projectdescription </th>
+                           <th> estimatedhours </th>
+                           <th> rate</th>
+                           <th> paymenttype </th>
+                           <th> totalinvoiced </th>
+                           <th> duedate </th>
+                           <th> closed</th>
+                         </tr>
+                        <tr>
+                          <td><input type = "text"  name = "id" size = "5" value = "0" /></td>
+                          <td><input type = "text"  name = "datecreated" size = "10" value = "" /></td>                          
+                          <td><input type = "text"  name = "creatorid" size = "5" value = "0" /></td>
+                          <td><input type = "text"  name = "projectname" size = "20" value = "" /></td>
+                          <td><input type = "text"  name = "projectdescription" size = "30" value = "" /></td>
+                          <td><input type = "text"  name = "estimatedhours" size = "3" value = "0" /></td>
+                          <td><input type = "text"  name = "rate" size = "5" value = "0.00" /></td>
+			  <td><input type = "text"  name = "paymenttype" size = "20" value = "" /></td>
+                          <td><input type = "text"  name = "totalinvoiced" size = "5" value = "0.00" /></td>
+                          <td><input type = "text"  name = "duedate" size = "7" value = "" /></td>
+                          <td><input type = "text"  name = "closed" size = "2" value = "1" /></td>
+                        </tr>
+                       </table>
+                       <button id="projectAddBtn">ADD</button>
+                       <button id="projectUpBtn">UPDATE</button>
+                       <button id="projectRemBtn">REMOVE</button>
+                      </div>
+                  </div>
+<script type="text/javascript" src="modal.js"></script>
+	</div>
+</body>
+</html>

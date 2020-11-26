@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title> ISP Final Project </title>
+	<link rel = "stylesheet" href="styles.css">
+</head>
+
+<body>
+	<section id="header">
+		<h1> Contacts </h1>
+		<hr>
+	</section>
+
+	<div class="sidebar">
+		<a href="homePage.html">Home</a>
+		<a href="projects.html">Projects</a>
+  		<a href="clients.html">Clients</a>
+  		<a href="contacts.html">Contacts</a>
+	</div>
+
+	<div class="main">
+		This is where we will put the stuff for contacts
+                <button id="modalBtn">CONTACTS MODAL TEST</button>
+
+                  <div id="myModal" class="modal">
+                     <div class="modal-content">
+                        <span class="close">&times;</span>
+                        <p style="text-align: center">CONTACT TEST</p>
+                        <table>
+                         <tr>
+                           <th> id </th>
+                           <th> datecreated </th>
+                           <th> creatorid </th>
+                           <th> projectid </th>
+                           <th> firstname </th>
+                           <th> lastname </th>
+                           <th> email </th>
+                           <th> maincontact</th>
+                         </tr>
+                        <tr>
+                          <td><input type = "text"  name = "id" size = "5" value = "0" /></td>
+                          <td><input type = "text"  name = "datecreated" size = "10" value = "" /></td>                          
+                          <td><input type = "text"  name = "creatorid" size = "5" value = "0" /></td>
+                          <td><input type = "text"  name = "projectid" size = "5" value = "" /></td>
+                          <td><input type = "text"  name = "firstname" size = "15" value = "" /></td>
+                          <td><input type = "text"  name = "lastname" size = "15" value = "" /></td>
+                          <td><input type = "text"  name = "email" size = "30" value = "" /></td>
+			  <td><input type = "text"  name = "maincontact" size = "20" value = "" /></td>
+                        </tr>
+                       </table>
+                       <button id="contactAddBtn">ADD</button>
+                       <button id="contactUpBtn">UPDATE</button>
+                       <button id="ContactRemBtn">REMOVE</button>
+                      </div>
+                  </div>
+<script type="text/javascript" src="modal.js"></script>
+	</div>
+</body>
+</html>
