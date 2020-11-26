@@ -1,6 +1,5 @@
 <?php
-  require "./Model.php";
-  public class Attachment extends Model {
+  public class Attachment {
     // members
     public $id;
     public $dateCreated;

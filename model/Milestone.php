@@ -1,5 +1,6 @@
 <?php
-  require "./Model.php";
+  include_once('../DB/Connection.php');
+
   class Milestone {
     // members
     public $id;
@@ -25,7 +26,7 @@
       return $instance;
     }
 
-    public static function ForRead($id, $datecreated, $creatorId, $projectId, $milestonename) {
+    public static function ForRead($id, $datecreated, $creatorId, $projectId, $milestonename, $datedue) {
       $instance = new self();
       $instance->id = $id;
       $instance->creatorId = $creatorId;
@@ -53,24 +54,26 @@
       return $result;
     }
 
-    public function findAll($options) {
+    public static function findAll($options) {
       $conn = new Connection();
       
       $sql = 'SELECT * FROM milestones';
 
+      if(count((array)$options) > 0) $sql .= " where ";
+
       foreach($options as $key => $value) {
         if(property_exists('Milestone', $key))
-          if($key == array_key_last($options)) {
+          if($key == array_key_last((array)$options)) {
             if(is_numeric($value)) {
-              $sql .= " WHERE $key = $value";
+              $sql .= " $key = $value";
             } else {
-              $sql .= " WHERE $key = '$value'";
+              $sql .= " $key = '$value'";
             }
           } else {
             if(is_numeric($value)) {
-              $sql .= " WHERE $key = $value AND";
+              $sql .= " $key = $value AND";
             } else {
-              $sql .= " WHERE $key = '$value' AND";
+              $sql .= " $key = '$value' AND";
             }
           }
       }
@@ -79,6 +82,7 @@
 
       $result = $conn->query($sql);
       $returnedArr = array();
+      if(!$result) return $returnedArr;
       while($row = $result->fetch_assoc()) {
         array_push($returnedArr, Milestone::ForRead($row["id"], $row["datecreated"], $row["creatorid"], $row["projectid"], $row["milestonename"], $row["datedue"]));
       }
@@ -88,14 +92,14 @@
       return $returnedArr;
     }
 
-    public function findById($id) {
+    public static function findById($id) {
       $returnedMilestone;
       $conn = new Connection();
       $conn->open();
       $sql = "SELECT * FROM milestones WHERE id = $id;";
       $result = $conn->query($sql);
 
-      if(mysqli_num_rows($result) > 1) {
+      if(mysqli_num_rows($result) > 1 || mysqli_num_rows($result) == 0) {
         $returnedMilestone = new Milestone();
       } else {
         $row = mysqli_fetch_assoc($result);

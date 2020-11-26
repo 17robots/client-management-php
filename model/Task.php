@@ -1,4 +1,6 @@
 <?php
+  include_once('../DB/Connection.php');
+
   class Task {
     public $id;
     public $creatorId;
@@ -27,7 +29,7 @@
       $instance->milestoneId = $milestoneId;
       $instance->title = $title;
       $instance->description = $description;
-      $instance;
+      return $instance;
     }
 
     public static function ForRead($id, $datecreated, $creatorId, $projectId, $milestoneId, $title, $description, $completed) {
@@ -53,9 +55,8 @@
         $sql = "insert into tasks(datecreated, creatorid, projectid, milestoneid, title, description, completed) values(NOW(), $this->creatorId, $this->projectId, $this->milestoneId, '$this->title', '$this->description', false);";
       }
       else {
-        $sql = "update tasks set creatorid = $this->creatorid, projectid = $this->projectId, milestoneid = $this->milestoneId, title = '$this->title', description = '$this->description', completed = '$this->completed' where id = $this->id;";
+        $sql = "update tasks set creatorid = $this->creatorId, projectid = $this->projectId, milestoneid = $this->milestoneId, title = '$this->title', description = '$this->description', completed = '$this->completed' where id = $this->id;";
       }
-
       $result = $conn->query($sql);
       if($result && $this->id == -1) $this->id = $conn->connection->insert_id;
       $conn->close();
@@ -63,24 +64,26 @@
     }
     
     // reading
-    public function findAll($options) {
+    public static function findAll($options) {
       $conn = new Connection();
 
       $sql = 'SELECT * FROM tasks';
 
+      if(count((array)$options) > 0) $sql .= " where ";
+
       foreach($options as $key => $value) {
         if(property_exists('Task', $key))
-          if($key == array_key_last($options)) {
+          if($key == array_key_last((array)$options)) {
             if(is_numeric($value)) {
-              $sql .= " WHERE $key = $value";
+              $sql .= " $key = $value";
             } else {
-              $sql .= " WHERE $key = '$value'";
+              $sql .= " $key = '$value'";
             }
           } else {
             if(is_numeric($value)) {
-              $sql .= " WHERE $key = $value AND";
+              $sql .= " $key = $value AND";
             } else {
-              $sql .= " WHERE $key = '$value' AND";
+              $sql .= " $key = '$value' AND";
             }
           }
       }
@@ -90,26 +93,27 @@
       $result = $conn->query($sql);
 
       $returnedArr = array();
+      if(!$result) return $returnedArr;
       while($row = $result->fetch_assoc()) {
-        array_push($returnedArr, Task::ForRead($row["id"], $row["datecreated"], $row["creatorid"], $row["projectid"], $row["milestoneid"], $row["name"], $row["description"], $row["completed"]));
+        array_push($returnedArr, Task::ForRead($row["id"], $row["datecreated"], $row["creatorid"], $row["projectid"], $row["milestoneid"], $row["title"], $row["description"], $row["completed"]));
       }
       $conn->close();
 
       return $returnedArr;
     }
 
-    public function findById($id) {
+    public static function findById($id) {
       $returnedTask;
       $conn = new Connection();
       
-      $sql = "SELECT * FROM clients WHERE id = $id;";
+      $sql = "SELECT * FROM tasks WHERE id = $id;";
       $result = $conn->query($sql);
 
-      if(mysqli_num_rows($result) > 1) {
-        $returnedTask = new Client();
+      if(mysqli_num_rows($result) > 1 || mysqli_num_rows($result) == 0) {
+        $returnedTask = new Task();
       } else if(mysqli_num_rows($result) == 1) {
         $row = $result->fetch_assoc();
-        $returnedTask = Task::ForRead($row["id"], $row["datecreated"], $row["creatorid"], $row["projectid"], $row["milestoneid"], $row["name"], $row["description"], $row["completed"]);
+        $returnedTask = Task::ForRead($row["id"], $row["datecreated"], $row["creatorid"], $row["projectid"], $row["milestoneid"], $row["title"], $row["description"], $row["completed"]);
       }
       $conn->close();
       return $returnedTask;

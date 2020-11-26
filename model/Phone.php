@@ -1,8 +1,7 @@
 <?php
-  require "./Model.php";
-  class Phone {
+  include_once('../DB/Connection.php');
 
-    // members
+  class Phone {
     public $id;
     public $datecreated;
     public $creatorId;
@@ -28,7 +27,7 @@
       return $instance;
     }
 
-    public static function ForRead($id, $creatorId, $datecreated, $contactId, $type, $number) {
+    public static function ForRead($id, $datecreated, $creatorId, $contactId, $type, $number) {
       $instance = new self();
       $instance->id = $id;
       $instance->creatorId = $creatorId;
@@ -45,34 +44,36 @@
       $result;
       $sql;
       if($this->id == -1) {
-        $sql = "insert into phones(datecreated, creatorid, contactid, phonetype, phonenumber) values (NOW(), $this->creatorId, $this->contactId, '$this->phonetype', $this->phonenumber');";
+        $sql = "insert into phones(datecreated, creatorid, contactid, phonetype, phonenumber) values (NOW(), $this->creatorId, $this->contactId, '$this->type', '$this->number');";
       } else {
-        $sql = "update contacts set creatorid = $this->creatorId, contactid = $this->contactId, phonetype = '$this->phonetype', phonenumber = '$this->phonenumber' where id = $this->id;";
+        $sql = "update phones set creatorid = $this->creatorId, contactid = $this->contactId, phonetype = '$this->type', phonenumber = '$this->number' where id = $this->id;";
       }
-
-      $result = mysqli_query($conn->get_connection(), $sql);
+      $result = $conn->query($sql);
+      if($result && $this->id == -1) $this->id = $conn->connection->insert_id;
       $conn->close();
       return $result;
     }
     
-    public function findAll($options){
+    public static function findAll($options){
       $conn = new Connection();
 
       $sql = 'SELECT * FROM phones';
 
+      if(count((array)$options) > 0) $sql .= " where ";
+
       foreach($options as $key => $value) {
         if(property_exists('Phone', $key))
-          if($key == array_key_last($options)) {
+          if($key == array_key_last((array)$options)) {
             if(is_numeric($value)) {
-              $sql .= " WHERE $key = $value";
+              $sql .= " $key = $value";
             } else {
-              $sql .= " WHERE $key = '$value'";
+              $sql .= " $key = '$value'";
             }
           } else {
             if(is_numeric($value)) {
-              $sql .= " WHERE $key = $value AND";
+              $sql .= " $key = $value AND";
             } else {
-              $sql .= " WHERE $key = '$value' AND";
+              $sql .= " $key = '$value' AND";
             }
           }
       }
@@ -82,6 +83,7 @@
       $result = $conn->query($sql);
       
       $returnedArr = array();
+      if(!$result) return $returnedArr;
       while($row = $result->fetch_assoc()) {
         array_push($returnedArr, Phone::ForRead($row["id"], $row["datecreated"], $row["creatorid"], $row["contactid"], $row["phonetype"], $row["phonenumber"]));
       }
@@ -91,14 +93,14 @@
       return $returnedArr;
     }
 
-    public function findById($id) {
+    public static function findById($id) {
       $returnedPhone;
       $conn = new Connection();
 
-      $sql = "SELECT * FROM phoness WHERE id = $id;";
+      $sql = "SELECT * FROM phones WHERE id = $id;";
       $result = $conn->query($sql);
 
-      if(mysqli_num_rows($result) > 1) {
+      if(mysqli_num_rows($result) > 1 || mysqli_num_rows($result) == 0) {
         $returnedPhone = new Phone();
       } else if(mysqli_num_rows($result) == 1) {
         $row = mysqli_fetch_assoc($result);
@@ -108,7 +110,7 @@
       return $returnedPhone;
     }
 
-    public static function deleteById($id);
+    public static function deleteById($id) {
       $conn = new Connection();
 
       $sql = "DELETE FROM phones WHERE id = $id;";
@@ -118,6 +120,5 @@
       $conn->close();
       return $result;
     }
-  }
   }
 ?>

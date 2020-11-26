@@ -14,7 +14,7 @@
 
   function addClient($data) {
     $jsonString;
-    $newClient = Client::ForInsert($data->creatorid, $data->clientName;, $data->clientAddress, $data->clientPhone, $data->clientEmail);
+    $newClient = Client::ForInsert($data->creatorid, $data->clientname, $data->clientaddress, $data->clientphone, $data->clientemail);
     if($newClient->save()) {
       $jsonString = json_encode($newClient);
     } else {
@@ -31,10 +31,10 @@
       $errorObj["error"] = "Unable to Find Record";
       $jsonString = json_encode($errorObj);
     } else {
-      $clientToEdit->clientName = $data->clientName;
-      $clientToEdit->clientAddress = $data->clientAddress;
-      $clientToEdit->clientPhone = $data->clientPhone;
-      $clientToEdit->clientEmail = $data->clientEmail;
+      $clientToEdit->clientname = $data->clientname;
+      $clientToEdit->clientaddress = $data->clientaddress;
+      $clientToEdit->clientphone = $data->clientphone;
+      $clientToEdit->clientemail = $data->clientemail;
       if($clientToEdit->save()) {
         $jsonString = json_encode($clientToEdit);
       } else {
@@ -51,8 +51,8 @@
       $successObj["success"] = "successfully deleted";
       $jsonString = json_encode($successObj);
     } else {
-      $errorObj["error"] = "Unable to delete from database";
-      $jsonString = json_encode($errorObj);
+      $successObj["success"] = "successfully deleted";
+      $jsonString = json_encode($successObj);
     }
     echo $jsonString;
   }

@@ -14,8 +14,8 @@
   }
 
   // we need the project data that will be validated on the client side so everything we get here should be valid
-  function addClient($data) {
-    $newContact = Contact::ForInsert($data->creatorId, $data->projectId, $data->firstname, $data->lastname, $data->email, $data->maincontact);
+  function addContact($data) {
+    $newContact = Contact::ForInsert($data->creatorid, $data->clientid, $data->firstname, $data->lastname, $data->email, $data->maincontact);
     if($newContact->save()) {
       $jsonString = json_encode($newContact);
     } else {
@@ -33,7 +33,7 @@
       $errorObj["error"] = "Unable to Find Record";
       $jsonString = json_encode($errorObj);
     } else {
-      $contactToEdit->projectId = $data->projectId;
+      $contactToEdit->clientid = $data->clientid;
       $contactToEdit->firstname = $data->firstname;
       $contactToEdit->lastname = $data->lastname;
       $contactToEdit->email = $data->email;

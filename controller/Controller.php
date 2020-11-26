@@ -1,9 +1,7 @@
 <?php
   include_once("ClientController.php");
   include_once("ContactController.php");
-  include_once("InvoiceController.php");
   include_once("MilestoneController.php");
-  include_once("NoteController.php");
   include_once("PhoneController.php");
   include_once("ProjectController.php");
   include_once("TaskController.php");
@@ -16,7 +14,9 @@
   header("Content-Type: application/json; charset=UTF-8");
   header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
-  $data = json_decode(file_get_contents("php://input"));
+  $textData = file_get_contents("php://input");
+  $data = json_decode($textData);
+  $errorObj;
 
   switch($data->action) {
     case "getProjects":

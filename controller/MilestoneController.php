@@ -13,7 +13,7 @@
   }
 
   function addMilestone($data) {
-    $newMilestone = Milestone::ForInsert($data->creatorid, $data->projectid, $data->milestonename, $data->datedue);
+    $newMilestone = Milestone::ForInsert($data->creatorid, $data->projectid, $data->milestonename, $data->duedate);
     if($newMilestone->save()) {
       $jsonString = json_encode($newMilestone);
     } else {
@@ -24,7 +24,7 @@
   }
 
   function updateMilestone($data) {
-    $milestoneToEdit = Contact::findById($data->id);
+    $milestoneToEdit = Milestone::findById($data->id);
     $jsonString;
     if($milestoneToEdit->id == -1) { // we couldnt find the milestone
       $errorObj["error"] = "Unable to Find Record";
@@ -32,7 +32,7 @@
     } else {
       $milestoneToEdit->projectId = $data->projectid;
       $milestoneToEdit->milestonename = $data->milestonename;
-      $milestoneToEdit->datedue = $data->datedue;
+      $milestoneToEdit->datedue = $data->duedate;
       if($milestoneToEdit->save()) {
         $jsonString = json_encode($milestoneToEdit);
       } else {
@@ -43,9 +43,9 @@
     echo $jsonString;
   }
 
-  function deleteMilestone($milestoneId) {
+  function deleteMilestone($data) {
     $jsonString;
-    if(Milestone::deleteById($clientId)) {
+    if(Milestone::deleteById($data->id)) {
       $successObj["success"] = "successfully deleted";
       $jsonString = json_encode($successObj);
     } else {

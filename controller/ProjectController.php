@@ -14,7 +14,7 @@
 
   function addProject($data) {
     $jsonString;
-    $newProject = Project::ForInsert($data->creatorid, $data->clientid, $data->name, $data->description, $data->estimatedhours, $data->rate, $data->duedate, $data->closed);
+    $newProject = Project::ForInsert($data->creatorid, $data->clientid, $data->name, $data->description, $data->estimatedhours, $data->rate, $data->paymenttype, $data->duedate);
     if($newProject->save()) {
       $jsonString = json_encode($newProject);
     } else {
@@ -27,14 +27,14 @@
   function updateProject($data) {
     $projectToEdit = Project::findById($data->id);
     $jsonString;
-    f($projectToEdit->id == -1) { // we couldnt find the client
+    if($projectToEdit->id == -1) { // we couldnt find the client
       $errorObj["error"] = "Unable to Find Record";
       $jsonString = json_encode($errorObj);
     } else {
       $projectToEdit->clientId = $data->clientid;
       $projectToEdit->name = $data->name;
       $projectToEdit->description = $data->description;
-      $project->estimatedHours = $data->estimatedhours;
+      $projectToEdit->estimatedHours = $data->estimatedhours;
       $projectToEdit->rate = $data->rate;
       $projectToEdit->paymentType = $data->paymenttype;
       $projectToEdit->totalInvoiced = $data->totalInvoiced;

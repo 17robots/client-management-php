@@ -1,6 +1,6 @@
 <?php
-  require "./Model.php";
-  public class User extends Model {
+  include_once('../DB/Connection.php');
+  class User {
     public $id;
     public $datecreated;
     public $firstname;
@@ -31,6 +31,7 @@
 
     public static function ForRead($id, $datecreated, $firstname, $lastname, $username, $email, $password) {
       $instance = new self();
+      $instance->id = $id;
       $instance->firstname = $firstname;
       $instance->lastname = $lastname;
       $instance->username = $username;
@@ -41,7 +42,6 @@
 
     public function save() {
       $conn = new Connection();
-      $conn->open();
       $result;
       $sql;
       if($this->id == -1) {
@@ -50,30 +50,31 @@
         $sql = "update users set firstname = '$this->firstname', lastname ='$this->lastname', username = '$this->username', email = '$this->email', password = '$this->password' where id = $this->id;";
       }
 
-      $result = mysqli_query($conn->get_connection(), $sql);
+      $result = $conn->query($sql);
       $conn->close();
       return $result;
     }
     
-    public function findAll($options) {
+    public static function findAll($options) {
       $conn = new Connection();
-      $conn->open();
 
-      $sql = 'SELECT * FROM users ';
+      $sql = 'SELECT * FROM users';
+
+      if(count((array)$options) > 0) $sql .= " where ";
 
       foreach($options as $key => $value) {
         if(property_exists('User', $key))
-          if($key == array_key_last($options)) {
+          if($key == array_key_last((array)$options)) {
             if(is_numeric($value)) {
-              $sql .= " WHERE $key = $value";
+              $sql .= " $key = $value";
             } else {
-              $sql .= " WHERE $key = '$value'";
+              $sql .= " $key = '$value'";
             }
           } else {
             if(is_numeric($value)) {
-              $sql .= " WHERE $key = $value AND";
+              $sql .= " $key = $value AND";
             } else {
-              $sql .= " WHERE $key = '$value' AND";
+              $sql .= " $key = '$value' AND";
             }
           }
       }
@@ -82,6 +83,7 @@
 
       $result = $conn->query($sql);
       $returnedArr = array();
+      if(!$result) return $returnedArr;
       while($row = $result->fetch_assoc()) {
         array_push($returnedArr, User::ForRead($row["id"], $row["datecreated"], $row["firstname"], $row["lastname"], $row["username"], $row["email"], $row["password"]));
       }
@@ -91,14 +93,14 @@
       return $returnedArr;
     }
 
-    public function findById($id) {
+    public static function findById($id) {
       $returnedUser;
       $conn = new Connection();
-      $conn->open();
-      $sql = "SELECT * FROM contacts WHERE id = " . $id . ';';
-      $result = mysqli_query($conn->get_connection(), $sql);
+      
+      $sql = "SELECT * FROM users WHERE id = $id;";
+      $result = $conn->query($sql);
 
-      if(mysqli_num_rows($result) > 1) {
+      if(mysqli_num_rows($result) > 1 || mysqli_num_rows($result) == 0) {
         $returnedUser = new User();
       } else if(mysqli_num_rows($result) == 1) {
         $row = $result->fetch_assoc();
@@ -110,7 +112,7 @@
 
     public static function deleteById($id) {
       $conn = new Connection();
-      $conn->open();
+      
 
       $sql = "DELETE FROM users WHERE id = $id;";
 

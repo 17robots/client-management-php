@@ -1,6 +1,7 @@
 <?php
-  require "./Model.php";
-  public Project {
+  include_once('../DB/Connection.php');
+
+  class Project {
     // members
     public $id;
     public $datecreated;
@@ -30,7 +31,7 @@
       $this->closed = false;
     }
 
-    public static function ForInsert($creatorId, $clientId, $name, $description, $estimatedHours, $rate, $paymentType, $dueDate, $closed) {
+    public static function ForInsert($creatorId, $clientId, $name, $description, $estimatedHours, $rate, $paymentType, $dueDate) {
       $instance = new self();
       $instance->creatorId = $creatorId;
       $instance->clientId = $clientId;
@@ -38,9 +39,8 @@
       $instance->description = $description;
       $instance->estimatedHours = $estimatedHours;
       $instance->rate = $rate;
-      $instance->paymentType = $paymentType
+      $instance->paymentType = $paymentType;
       $instance->dueDate = $dueDate;
-      $instance->closed = $closed;
       return $instance;
     }
 
@@ -55,7 +55,7 @@
       $instance->estimatedHours = $estimatedHours;
       $instance->totalInvoiced = $totalInvoiced;
       $instance->rate = $rate;
-      $instance->paymentType = $paymentType
+      $instance->paymentType = $paymentType;
       $instance->dueDate = $dueDate;
       $instance->closed = $closed;
       return $instance;
@@ -68,9 +68,11 @@
       $result;
       $sql;
       if($this->id == -1) {
-        $sql = "insert into projects(datecreated, creatorid, clientid, projectname, projectdescription, estimatedhours, rate, paymenttype, totalinvoiced, duedate, closed) values(NOW(), $this->creatorId, $this->clientId, '$this->name', '$this->description', $this->estimatedHours, $this->rate, '$this->paymentType', 0, CAST('$this->duedate' as datetime), $this->closed);";
+        $dateTime = strtotime($this->dueDate);
+        if(!$dateTime) $dateTime = "";
+        $sql = "insert into projects(datecreated, creatorid, clientid, projectname, projectdescription, estimatedhours, rate, paymenttype, totalinvoiced, duedate, closed) values(NOW(), $this->creatorId, $this->clientId, '$this->name', '$this->description', $this->estimatedHours, $this->rate, '$this->paymentType', 0, CAST('$dateTime' as datetime), false);";
       } else {
-        $sql = "update projects set creatorid = $this->creatorId, clientid = $this->clientId, projectname = '$this->name', projectdescription = '$this->description', estimatedhours = $this->estimatedHours, rate = $this->rate, paymenttype = '$this->paymentType, totalinvoiced = $this->totalInvoiced, duedate = CAST('$this->dueDate' as datetime), closed = closed where id = $this->id;";
+        $sql = "update projects set creatorid = $this->creatorId, clientid = $this->clientId, projectname = '$this->name', projectdescription = '$this->description', estimatedhours = $this->estimatedHours, rate = $this->rate, paymenttype = '$this->paymentType', totalinvoiced = $this->totalInvoiced, duedate = CAST('$this->dueDate' as datetime), closed = $this->closed where id = $this->id;";
       }
       $result = $conn->query($sql);
       if($result && $this->id == -1) $this->id = $conn->connection->insert_id;
@@ -79,35 +81,38 @@
     }
     
     // reading
-    public function findAll($options) {
+    public static function findAll($options) {
       $conn = new Connection();
 
       $sql = 'SELECT * FROM projects';
 
+      if(count((array)$options) > 0) $sql .= " where ";
+
       foreach($options as $key => $value) {
         if(property_exists('Project', $key))
-          if($key == array_key_last($options)) {
+          if($key == array_key_last((array)$options)) {
             if(is_numeric($value)) {
-              $sql .= " WHERE $key = $value";
+              $sql .= " $key = $value";
             } else {
-              $sql .= " WHERE $key = '$value'";
+              $sql .= " $key = '$value'";
             }
           } else {
             if(is_numeric($value)) {
-              $sql .= " WHERE $key = $value AND";
+              $sql .= " $key = $value AND";
             } else {
-              $sql .= " WHERE $key = '$value' AND";
+              $sql .= " $key = '$value' AND";
             }
           }
       }
 
       $sql .= ' ORDER BY ID';
-
+      
       $result = $conn->query($sql);
 
       $returnedArr = array();
+      if(!$result) return $returnedArr;
       while($row = $result->fetch_assoc()) {
-        array_push($returnedArr, Project::ForRead($row["id"], $row["datecreated"], $row["creatorid"], $row["clientid"], $row["clientname"], $row["projectdescription"], $row["estimatedhours"], $row["totalinvoiced"], $row["rate"], $row["paymenttype"], $row["duedate"], $row["closed"]));
+        array_push($returnedArr, Project::ForRead($row["id"], $row["datecreated"], $row["creatorid"], $row["clientid"], $row["projectname"], $row["projectdescription"], $row["estimatedhours"], $row["totalinvoiced"], $row["rate"], $row["paymenttype"], $row["duedate"], $row["closed"]));
       }
 
       $conn->close();
@@ -115,18 +120,18 @@
       return $returnedArr;
     }
 
-    public function findById($id) {
+    public static function findById($id) {
       $returnedProject;
       $conn = new Connection();
       
       $sql = "SELECT * FROM projects WHERE id = $id;";
       $result = $conn->query($sql);
 
-      if(mysqli_num_rows($result) > 1) {
+      if(mysqli_num_rows($result) > 1 || mysqli_num_rows($result) == 0) {
         $returnedProject = new Client();
       } else if(mysqli_num_rows($result) == 1) {
         $row = mysqli_fetch_assoc($result);
-        $returnedProject = Project::ForRead($row["id"], $row["datecreated"], $row["creatorid"], $row["clientid"], $row["clientname"], $row["projectdescription"], $row["estimatedhours"], $row["totalinvoiced"], $row["rate"], $row["paymenttype"], $row["duedate"], $row["closed"])
+        $returnedProject = Project::ForRead($row["id"], $row["datecreated"], $row["creatorid"], $row["clientid"], $row["projectname"], $row["projectdescription"], $row["estimatedhours"], $row["totalinvoiced"], $row["rate"], $row["paymenttype"], $row["duedate"], $row["closed"]);
       }
       $conn->close();
       return $returnedProject;

@@ -1,60 +1,69 @@
 <?php  
   include_once('../model/User.php');
-  public static function login($data) {
+
+  function login($data) {
     $jsonString;
-    $returnedUser = User::findAll($data->options);
-    if(count($returnedUser) != 1) {
-      $error["error"] = "Incorrect Username Or Password";
-      $jsonString = json_encode($error);
-    } else {
-      $authData["userId"] = $userEmail[0]->id;
+    $resultArray = User::findAll($data->options);
+    if(count($resultArray) == 1 && $resultArray[0]->id != -1) {
+      $authData["userId"] = $resultArray[0]->id;
       $authData["token"] = 1; // figure out how to do token creation
       $authData["tokenExpiration"] = 3600; // 1 hour
       $authData["success"] = "successfully logged in";
       $jsonString = json_encode($authData);
+    } else {
+      $error["error"] = "Incorrect Username Or Password";
+      $jsonString = json_encode($error);
     }
     echo $jsonString;
   }
 
-  public static function addUser($data) {
-    $user["username"] = $data->username;
-    $usersByUser = User::findAll(json_encode($user));
-    $user["username"] = "";
-    $user["email"] = $data->email;
-    $usersByEmail = User::findAll(json_encode($user));
+  function addUser($data) {
+    $user = array("username" => $data->username);
+    $usersByUser = User::findAll($user);
+    $user = array("email" => $data->email);
+    $usersByEmail = User::findAll($user);
     if(count($usersByEmail) > 0 ||count($usersByUser) > 0) {
       $errorObj["error"] = "Email Or Username Already In Use";
       $jsonString = json_encode($errorObj);
-      return $jsonString;
+      echo $jsonString;
+      return;
     }
 
     $newUser = User::ForInsert($data->firstname, $data->lastname, $data->username, $data->email, $data->password);
     if($newUser->save()) {
       $jsonString = json_encode($newUser);
     } else {
-      $jsonString = json_encode({"error" => "Unable To Insert Into Database"});
+      $errorObj["error"] = "Unable to insert into database";
+      $jsonString = json_encode($errorObj);
     }
     echo $jsonString;
   }
 
-  public static function updateUser($userId, $newUserData) {
-    $user["username"] = $data->username;
-    $usersByUser = User::findAll(json_encode($user));
-    $user["username"] = "";
-    $user["email"] = $data->email;
-    $usersByEmail = User::findAll(json_encode($user));
-    if((count($usersByEmail) == 1 && $usersByEmail[0]->id != $data->id)  || (count($usersByUser) == 1 && $usersByUser[0]->id != $data->id)) {
+  function updateUser($data) {
+    $user = new stdClass();
+    $user->username = $data->username;
+    $usersByUser = User::findAll($user);
+    $user = new stdClass();
+    $user->email = $data->email;
+    $usersByEmail = User::findAll($user);
+    if((count($usersByEmail) == 1 && $usersByEmail[0]->id != $data->id) || (count($usersByUser) == 1 && $usersByUser[0]->id != $data->id)) {
       $errorObj["error"] = "Email Or Username Already In Use";
       $jsonString = json_encode($errorObj);
-      return $jsonString;
+      echo $jsonString;
+      return;
     }
 
-    $userToEdit = User::findById($userId);
+    $userToEdit = User::findById($data->id);
     $jsonString;
     if($userToEdit->id == -1) {
       $errorObj["error"] = "Unable to Find Record";
       $jsonString = json_encode($errorObj);
     } else {
+      $userToEdit->username = $data->username;
+      $userToEdit->firstname = $data->firstname;
+      $userToEdit->lastname = $data->lastname;
+      $userToEdit->email = $data->email;
+      $userToEdit->password = $data->password;
       if($userToEdit->save()) {
         $jsonString = json_encode($userToEdit);
       } else {
@@ -65,9 +74,9 @@
     echo $jsonString;
   }
 
-  public static function deleteUser($userId) {
+  function deleteUser($data) {
     $jsonString;
-    if(User::deleteById($clientId)) {
+    if(User::deleteById($data->id)) {
       $successObj["success"] = "successfully deleted";
       $jsonString = json_encode($successObj);
     } else {

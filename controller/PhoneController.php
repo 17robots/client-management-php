@@ -1,18 +1,18 @@
 <?php
   include_once('../model/Phone.php');
 
-  public static function getPhones($data) {
+  function getPhones($data) {
     $resultArray = Phone::findAll($data->options);
     $jsonString = json_encode($resultArray);
     echo $jsonString;
   }
 
-  public static function getPhone($data) {
+  function getPhone($data) {
     $returnedPhone = json_encode(Phone::findById($data->id));
     echo $returnedPhone;
   }
 
-  public static function addPhone($data) {
+  function addPhone($data) {
     $newPhone = Phone::ForInsert($data->creatorid, $data->contactid, $data->type, $data->number);
     if($newPhone->save()) {
       $jsonString = json_encode($newPhone);
@@ -23,7 +23,7 @@
     echo $jsonString;
   }
 
-  public static function updatePhone($data) {
+  function updatePhone($data) {
     $phoneToEdit = Phone::findById($data->id);
     $jsonString;
     if($phoneToEdit->id == -1) { // we couldnt find the client
@@ -43,9 +43,9 @@
     echo $jsonString;
   }
 
-  public static function deleteProject($data) {
+  function deletePhone($data) {
     $jsonString;
-    if(Phone::deleteById($clientId)) {
+    if(Phone::deleteById($data->id)) {
       $successObj["success"] = "successfully deleted";
       $jsonString = json_encode($successObj);
     } else {
