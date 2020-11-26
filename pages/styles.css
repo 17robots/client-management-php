@@ -10,6 +10,24 @@ section#header
 	padding-left: 160px;
 }
 
+.login 
+{
+	color: #3091ff;
+	text-align: right;
+	padding-left: 160px;
+}
+
+.login a{
+	padding-right: 10px;
+	font-size: 15px;
+	color: #3091ff
+}
+
+.login a:hover{
+	color: lightblue;
+	cursor: pointer;
+}
+
 .sidebar {
 	height: 100%;
 	width: 160px;
@@ -81,5 +99,10 @@ section#header
   color: black;
   text-decoration: none;
   cursor: pointer;
+}
+
+.loginPage{
+	color: #3091ff;
+	text-align: center;
 }
 
