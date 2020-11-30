@@ -8,6 +8,9 @@ const INITIAL_STATE = {
 }
 
 export const projectReducer = (state = INITIAL_STATE, action) => {
+  let body
+  let updatedProjects
+  let selectedProject
   switch (action.type) {
     case START_CREATE:
       return {
@@ -20,7 +23,7 @@ export const projectReducer = (state = INITIAL_STATE, action) => {
         isCreating: false
       }
     case START_EDIT:
-      const selectedProject = state.projects.find(e => e.id === action.id)
+      selectedProject = state.projects.find(e => e.id === action.id)
       return {
         ...state,
         isEditing: true,
@@ -33,18 +36,18 @@ export const projectReducer = (state = INITIAL_STATE, action) => {
         selectedProject: null
       }
     case ADD_PROJECT:
-      const updatedProjects = [...state.projects]
+      updatedProjects = [...state.projects]
       // lets make the request
-      const body = {
+      body = {
         action: "addProject",
         creatorid: action.creator,
         clientid: action.clientid,
         name: action.name,
         description: action.description,
         estimatedhours: action.estimatedhours,
-        rate: rate,
+        rate: action.rate,
         paymenttype: action.paymenttype,
-        duedate: duedate
+        duedate: action.duedate
       }
 
       fetch('http://localhost/isp/project/controller/Controller.php', {
@@ -88,7 +91,7 @@ export const projectReducer = (state = INITIAL_STATE, action) => {
         .then(res => res.json)
         .then(resData => {
           if (resData.error) {
-            console.log(error)
+            console.log(resData.error)
             return state
           } else {
             updatedProjects[state.projects.indexOf(state.projects.find(e => e.id === state.selectedProject.id))] = {
@@ -143,7 +146,7 @@ export const projectReducer = (state = INITIAL_STATE, action) => {
         selectedProject: null
       }
     case FETCH_PROJECTS:
-      const projects = []
+      let projects = []
       body = {
         action: "getProjects",
         options: action.options
