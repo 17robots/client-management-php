@@ -8,7 +8,7 @@ import { connect } from 'react-redux'
 
 import ClientList from '../components/Clients/ClientList/ClientList'
 import ClientDetails from '../components/Clients/ClientDetails/ClientDetails'
-import Modal from '../components/Modal/Modal'
+import Modal from '../components/Modal/Modal.js'
 import Backdrop from '../components/Backdrop/Backdrop'
 
 const mapStateToProps = state => ({
