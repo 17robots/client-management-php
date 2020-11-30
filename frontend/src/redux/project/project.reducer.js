@@ -1,4 +1,4 @@
-import { ADD_PROJECT, EDIT_PROJECT, REMOVE_PROJECT, START_CREATE, STOP_CREATE, START_EDIT, STOP_EDIT, SELECT_PROJECT } from './project.types'
+import { ADD_PROJECT, EDIT_PROJECT, REMOVE_PROJECT, START_CREATE, STOP_CREATE, START_EDIT, STOP_EDIT, SELECT_PROJECT, DESELECT_PROJECT, FETCH_PROJECTS } from './project.types'
 
 const INITIAL_STATE = {
   projects: [],
@@ -7,7 +7,7 @@ const INITIAL_STATE = {
   selectedProject: null
 }
 
-const projectReducer = (state = INITIAL_STATE, action) => {
+export const projectReducer = (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case START_CREATE:
       return {
@@ -47,7 +47,7 @@ const projectReducer = (state = INITIAL_STATE, action) => {
         duedate: duedate
       }
 
-      fetch('https://localhost/isp/project/controller/Controller.php', {
+      fetch('http://localhost/isp/project/controller/Controller.php', {
         method: 'POST',
         body: JSON.stringify(body),
         headers: {
@@ -71,14 +71,14 @@ const projectReducer = (state = INITIAL_STATE, action) => {
         projects: updatedProjects
       }
     case EDIT_PROJECT:
-      const updatedProjects = [...state.projects]
+      updatedProjects = [...state.projects]
       // lets make the request
-      const body = {
+      body = {
         action: "updateProject",
         ...action
       }
 
-      fetch('https://localhost/isp/project/controller/Controller.php', {
+      fetch('http://localhost/isp/project/controller/Controller.php', {
         method: 'POST',
         body: JSON.stringify(body),
         headers: {
@@ -103,13 +103,73 @@ const projectReducer = (state = INITIAL_STATE, action) => {
         isEditing: false,
         selectedProject: false
       }
+    case REMOVE_PROJECT:
+      updatedProjects = [...state.projects]
+      body = {
+        action: "removeProject",
+        id: state.selectedProject.id
+      }
+
+      fetch('http://localhost/isp/project/controller/Controller.php', {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8'
+        }
+      })
+        .then(res => res.json())
+        .then(resData => {
+          if (resData.success) {
+            updatedProjects = updatedProjects.filter(item => item.id !== state.selectedProject.id)
+          } else {
+            console.log(resData.error)
+            return state
+          }
+        })
+      return {
+        ...state,
+        projects: updatedProjects,
+        selectedProject: null
+      }
     case SELECT_PROJECT:
-      const selectedProject = state.projects.find(e => e.id === action.id)
+      selectedProject = state.projects.find(e => e.id === action.id)
       return {
         ...state,
         selectedProject
       }
+    case DESELECT_PROJECT:
+      return {
+        ...state,
+        selectedProject: null
+      }
+    case FETCH_PROJECTS:
+      const projects = []
+      body = {
+        action: "getProjects",
+        options: action.options
+      }
+
+      fetch('http://localhost/isp/project/controller/Controller.php', {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8'
+        }
+      })
+        .then(res => res.json())
+        .then(resData => {
+          if (resData.error) {
+            console.log(resData.error)
+            return state
+          } else {
+            projects = resData
+          }
+        })
+      return {
+        ...state,
+        projects
+      }
+    default:
+      return state
   }
 }
-
-export default projectReducer

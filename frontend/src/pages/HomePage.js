@@ -1,22 +1,9 @@
+import React from 'react'
 const HomePage = () => (
   <div>
-    <section id="header">
-      <h1> Client Management Service </h1>
-    </section>
-
-    <section className="login">
-      <a href="login.html"><b>Login Here</b></a>
-    </section>
+    <h1> Client Management Service </h1>
 
     <hr />
-
-    <div className="sidebar">
-      <a href="homePage.html">Home</a>
-      <a href="projects.html">Projects</a>
-      <a href="clients.html">Clients</a>
-      <a href="contacts.html">Contacts</a>
-    </div>
-
     <div className="main">
       <section className="instruction">
         <h3> Welcome to our CMS tool! For help on how to use it, please watch the video below. </h3>
@@ -30,8 +17,8 @@ const HomePage = () => (
       <section className="documentation">
         <p> Our ISP term project is a client management web application utilizing php and sql
         databases of the type InnoDB. The application allows users to keep track of projects that are
-        being worked on and the clients that contracted them. Thus, the application has 9 database tables:
-        attachments, clients, contacts, events, milestones, phones, projects, tasks, and users. These tables
+        being worked on and the clients that contracted them. Thus, the application has 6 database tables:
+        clients, contacts, milestones, projects, tasks, and users. These tables
         all work to help developers keep track of the development of projects, information on clients,
         and various other utilities. So far, the project consists of various files that can be broken into the
         three following categories: the database itself, the controllers, and the models. Here, the models
@@ -43,10 +30,11 @@ const HomePage = () => (
         </p>
         <br />
         <h3>Documents: </h3>
-        <a href="">Paper</a> <a href="">Powerpoint</a>
+        <button>Paper</button> <button>Powerpoint</button>
       </section>
     </div>
   </div>
 )
 
 export default HomePage;
+

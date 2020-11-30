@@ -1,23 +1,28 @@
-import { ADD_TASK, REMOVE_TASK, EDIT_TASK, START_CREATE, STOP_CREATE, START_EDIT, STOP_EDIT, SELECT_TASK, DESELECT_TASK, FETCH_TASKS } from './task.types'
+import { ADD_CONTACT, REMOVE_CONTACT, EDIT_CONTACT, START_CREATE, STOP_CREATE, START_EDIT, STOP_EDIT, SELECT_CONTACT, DESELECT_CONTACT, FETCH_CONTACTS } from './contact.types'
 
 const INITIAL_STATE = {
-  tasks: [],
-  selectedTask: null,
+  contacts: [],
+  selectedContact: null,
   isCreating: false,
   isEditing: false
 }
 
-export const taskReducer = (state = INITIAL_STATE, action) => {
+export const contactReducer = (state = INITIAL_STATE, action) => {
+  let updatedContacts
+  let body
+  let selectedContact
   switch (action.type) {
-    case ADD_TASK:
-      let updatedTasks = [...state.tasks]
-      let body = {
-        action: "addClient",
+    case ADD_CONTACT:
+      updatedContacts = [...state.contacts]
+      body = {
+        action: "addContact",
         creatorid: action.creator,
-        projectid: action.project,
-        milestoneid: action.milestone,
-        title: action.title,
-        description: action.description
+        clientid: action.client,
+        firstname: action.firstname,
+        lastname: action.lastname,
+        email: action.email,
+        phone: action.phone,
+        maincontact: action.maincontact
       }
 
       fetch('http://localhost/isp/project/controller/Controller.php', {
@@ -33,35 +38,37 @@ export const taskReducer = (state = INITIAL_STATE, action) => {
             console.log(resData.error)
             return state
           } else {
-            updatedTasks.push({
+            updatedContacts.push({
               id: resData.id,
-              creatorid: resData.creatorId,
-              projectid: resData.projectid,
-              milestoneid: resData.milestoneId,
-              title: resData.title,
-              description: resData.description,
-              completed: false
+              creatorid: resData.creatorid,
+              clientid: resData.clientid,
+              firstname: resData.firstname,
+              lastname: resData.lastname,
+              email: resData.email,
+              phone: resData.phone,
+              maincontact: resData.maincontasct
             })
           }
         })
       return {
         ...state,
-        tasks: updatedTasks,
+        contacts: updatedContacts,
         isCreating: false
       }
-    case EDIT_TASK:
-      updatedTasks = [...state.tasks]
+    case EDIT_CONTACT:
+      updatedContacts = [...state.contacts]
       body = {
-        action: "updateTask",
-        id: state.selectedTask.id,
-        projectid: action.projectid,
-        milestoneid: action.milestoneid,
-        title: action.title,
-        description: action.description,
-        completed: action.completed
+        action: "editContact",
+        id: state.selectedContact.id,
+        clientid: action.clientid,
+        firstname: action.firstname,
+        lastname: action.lastname,
+        email: action.email,
+        phone: action.phone,
+        maincontact: action.maincontact
       }
 
-      fetch('https://localhost/isp/project/controller/Controller.php', {
+      fetch('http://localhost/isp/project/controller/Controller.php', {
         method: 'POST',
         body: JSON.stringify(body),
         headers: {
@@ -74,26 +81,27 @@ export const taskReducer = (state = INITIAL_STATE, action) => {
             console.log(resData.error)
             return state
           } else {
-            updatedTasks[updatedTasks.indexOf(updatedTasks.find(e => e.id === state.selectedTask.id))] = {
-              ...updatedTasks[updatedTasks.indexOf(updatedTasks.find(e => e.id === state.selectedTask.id))],
-              projectid: action.projectid,
-              milestoneid: action.milestoneid,
-              title: action.title,
-              description: action.description,
-              completed: action.completed
+            updatedContacts[updatedContacts.indexOf(updatedContacts.find(state.selectedContact.id))] = {
+              ...updatedContacts[updatedContacts.indexOf(updatedContacts.find(state.selectedContact.id))],
+              clientid: resData.clientid,
+              firstname: resData.firstname,
+              lastname: resData.lastname,
+              email: resData.email,
+              phone: resData.phone,
+              maincontact: resData.maincontact
             }
           }
         })
       return {
         ...state,
-        tasks: updatedTasks,
+        contacts: updatedContacts,
         isEditing: false,
-        selectedTask: null
+        selectedContact: null
       }
-    case REMOVE_TASK:
-      updatedTasks = [...state.tasks]
+    case REMOVE_CONTACT:
+      updatedContacts = [...state.contacts]
       body = {
-        action: "deleteTask",
+        action: "deleteContact",
         id: action.id
       }
 
@@ -107,7 +115,7 @@ export const taskReducer = (state = INITIAL_STATE, action) => {
         .then(res => res.json())
         .then(resData => {
           if (resData.success) {
-            updatedTasks = updatedTasks.filter(item => item.id !== state.selectedTask.id)
+            updatedContacts = updatedContacts.filter(item => item.id !== state.selectedContact.id)
           } else {
             console.log(resData.error)
             return state
@@ -115,13 +123,13 @@ export const taskReducer = (state = INITIAL_STATE, action) => {
         })
       return {
         ...state,
-        selectedTask: null,
-        tasks: updatedTasks
+        contacts: updatedContacts,
+        selectedContact: null
       }
     case START_CREATE:
       return {
         ...state,
-        isCreating: true
+        isCreating: true,
       }
     case STOP_CREATE:
       return {
@@ -129,33 +137,33 @@ export const taskReducer = (state = INITIAL_STATE, action) => {
         isCreating: false
       }
     case START_EDIT:
-      let selectedTask = state.tasks.find(e => e.id === action.id)
+      selectedContact = state.contacts.find(e => e.id === action.id)
       return {
         ...state,
         isEditing: true,
-        selectedTask
+        selectedContact
       }
     case STOP_EDIT:
       return {
         ...state,
         isEditing: false,
-        selectedTask: null
+        selectedContact: null
       }
-    case SELECT_TASK:
-      selectedTask = state.tasks.find(e => e.id === action.id)
+    case SELECT_CONTACT:
+      selectedContact = state.contacts.find(e => e.id === action.id)
       return {
         ...state,
-        selectedTask
+        selectedContact
       }
-    case DESELECT_TASK:
+    case DESELECT_CONTACT:
       return {
         ...state,
-        selectedTask: null
+        selectedContact: null
       }
-    case FETCH_TASKS:
-      let tasks = []
+    case FETCH_CONTACTS:
+      let contacts = []
       body = {
-        action: "getTasks",
+        action: "getContacts",
         options: action.options
       }
 
@@ -172,12 +180,12 @@ export const taskReducer = (state = INITIAL_STATE, action) => {
             console.log(resData.error)
             return state
           } else {
-            tasks = resData
+            contacts = resData
           }
         })
       return {
         ...state,
-        tasks
+        contacts
       }
     default:
       return state

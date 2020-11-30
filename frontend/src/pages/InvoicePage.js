@@ -11,4 +11,7 @@ export default class InvoicePage extends React.Component {
     totalInvoiceItems: []
   }
 
+  render() {
+    return <h1>Invoice Page</h1>
+  }
 }

@@ -1,4 +1,4 @@
-import { ADD_CLIENT, EDIT_CLIENT, REMOVE_CLIENT, START_CREATE, START_EDIT, STOP_CREATE, STOP_EDIT } from './client.types'
+import { ADD_CLIENT, DESELECT_CLIENT, EDIT_CLIENT, FETCH_CLIENTS, REMOVE_CLIENT, SELECT_CLIENT, START_CREATE, START_EDIT, STOP_CREATE, STOP_EDIT } from './client.types'
 
 const INITIAL_STATE = {
   clients: [],
@@ -7,7 +7,11 @@ const INITIAL_STATE = {
   isEditing: false
 }
 
-const clientReducer = (state = INITIAL_STATE, action) => {
+export const clientReducer = (state = INITIAL_STATE, action) => {
+  let body
+  let updatedClients
+  let updateClients
+  let selectedClient
   switch (action.type) {
     case START_CREATE:
       return {
@@ -20,7 +24,7 @@ const clientReducer = (state = INITIAL_STATE, action) => {
         isCreating: false
       }
     case START_EDIT:
-      const selectedClient = state.clients.find(e => e.id === action.id)
+      selectedClient = state.clients.find(e => e.id === action.id)
       return {
         ...state,
         isEditing: true,
@@ -34,8 +38,8 @@ const clientReducer = (state = INITIAL_STATE, action) => {
       }
     case ADD_CLIENT:
       // lets make the request
-      const updatedClients = [...state.clients]
-      const body = {
+      updatedClients = [...state.clients]
+      body = {
         action: "addClient",
         creatorid: action.creator,
         name: action.name,
@@ -43,7 +47,7 @@ const clientReducer = (state = INITIAL_STATE, action) => {
         phone: action.phone,
         email: action.email
       }
-      fetch('https://localhost/isp/project/controller/Controller.php', {
+      fetch('http://localhost/isp/project/controller/Controller.php', {
         method: 'POST',
         body: JSON.stringify(body),
         headers: {
@@ -74,9 +78,9 @@ const clientReducer = (state = INITIAL_STATE, action) => {
         clients: updatedClients
       }
     case EDIT_CLIENT:
-      const updatedClients = [...state.clients]
+      updatedClients = [...state.clients]
       // lets make the request
-      const body = {
+      body = {
         action: "updateClient",
         id: state.selectedClient.id,
         clientname: action.name,
@@ -85,7 +89,7 @@ const clientReducer = (state = INITIAL_STATE, action) => {
         clientemail: action.email
       }
 
-      fetch('https://localhost/isp/project/controller/Controller.php', {
+      fetch('http://localhost/isp/project/controller/Controller.php', {
         method: 'POST',
         body: JSON.stringify(body),
         headers: {
@@ -114,13 +118,13 @@ const clientReducer = (state = INITIAL_STATE, action) => {
         selectedClient: null
       }
     case REMOVE_CLIENT:
-      const updateClients = [...state.clients]
+      updateClients = [...state.clients]
       // lets make the request
-      const body = {
+      body = {
         action: "deleteClient",
         id: action.id
       }
-      fetch('https://localhost/isp/project/controller/Controller.php', {
+      fetch('http://localhost/isp/project/controller/Controller.php', {
         method: 'POST',
         body: JSON.stringify(body),
         headers: {
@@ -140,7 +144,45 @@ const clientReducer = (state = INITIAL_STATE, action) => {
         isCreating: null,
         clients: updateClients
       }
+    case SELECT_CLIENT:
+      selectedClient = state.clients.find(e => e.id === action.id)
+      return {
+        ...state,
+        selectedClient
+      }
+    case DESELECT_CLIENT:
+      return {
+        ...state,
+        selectedClient: null
+      }
+    case FETCH_CLIENTS:
+      let clients = []
+      body = {
+        action: "getClients",
+        options: action.options
+      }
+
+      fetch('http://localhost/isp/project/controller/Controller.php', {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8'
+        }
+      })
+        .then(res => res.json())
+        .then(resData => {
+          if (resData.error) {
+            console.log(resData.error)
+            return state
+          } else {
+            clients = resData
+          }
+        })
+      return {
+        ...state,
+        clients
+      }
+    default:
+      return state
   }
 }
-
-export default clientReducer

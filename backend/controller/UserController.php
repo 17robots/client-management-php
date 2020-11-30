@@ -22,7 +22,7 @@
     $usersByUser = User::findAll($user);
     $user = array("email" => $data->email);
     $usersByEmail = User::findAll($user);
-    if(count($usersByEmail) > 0 ||count($usersByUser) > 0) {
+    if(count($usersByEmail) > 0 || count($usersByUser) > 0) {
       $errorObj["error"] = "Email Or Username Already In Use";
       $jsonString = json_encode($errorObj);
       echo $jsonString;
