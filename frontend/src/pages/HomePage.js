@@ -30,7 +30,8 @@ const HomePage = () => (
         </p>
         <br />
         <h3>Documents: </h3>
-        <button>Paper</button> <button>Powerpoint</button>
+        <a href="ISP-Project-Final-Report.pdf" download="ISPReport">Report</a>
+        <a href="ISP-Project-Pres.pptx" download="ISPPresentation">Presentation</a>
       </section>
     </div>
   </div>
