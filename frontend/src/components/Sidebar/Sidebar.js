@@ -166,13 +166,13 @@ const Sidebar = props => {
       {
         isAuthing && canAuth && isLogin &&
         <Modal
-          title="Sign Up"
+          title="Log In"
           canCancel
           canConfirm
           onCancel={cancelAuth}
           onConfirm={login}
           CancelText="Cancel"
-          confirmText="Register"
+          confirmText="Log In"
         >
           <form>
             <div className="form-control">
