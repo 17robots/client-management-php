@@ -70,13 +70,15 @@ section#header
 	text-align: left;
 }
 
-.main .documentation button{
+.main .documentation a{
 	font-size: 15px;
   background-color: #3091ff;
   color: lightgrey;
+  margin-right: 5px;
+  box-shadow: 1px 3px black;
 }
 
-.main .documentation button:hover{
+.main .documentation a:hover{
   color: white;
   background-color: blue;
 	cursor: pointer;
