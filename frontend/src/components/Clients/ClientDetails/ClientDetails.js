@@ -4,7 +4,7 @@ import { selectClient } from '../../../redux/client/client.selectors'
 import { myContactList, selectContact, selectCreating, selectEditing } from '../../../redux/contact/contact.selectors'
 import { myProjectListClient } from '../../../redux/project/project.selectors'
 import { deselectClient } from '../../../redux/client/client.actions'
-import { addContact, editContact, deleteContact, startEdit, startCreate, stopCreate, stopEdit } from '../../../redux/contact/contact.actions'
+import { addContact, editContact, deleteContact, startEdit, startCreate, stopCreate, stopEdit, fetchContacts } from '../../../redux/contact/contact.actions'
 import Modal from '../../Modal/Modal'
 import Backdrop from '../../Backdrop/Backdrop'
 
@@ -22,14 +22,15 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    deselectClient: () => { dispatch(deselectClient()) },
-    addContact: contactData => { dispatch(addContact(contactData)) },
-    editContact: newData => { dispatch(editContact(newData)) },
-    beginCreate: () => { dispatch(startCreate()) },
-    cancelCreate: () => { dispatch(stopCreate()) },
-    beginEdit: id => { dispatch(startEdit(id)) },
-    cancelEdit: () => { dispatch(stopEdit()) },
-    deleteContact: id => { dispatch(deleteContact(id)) }
+    deselectClient: () => dispatch(deselectClient()),
+    addContact: contactData => dispatch(addContact(contactData)),
+    editContact: newData => dispatch(editContact(newData)),
+    beginCreate: () => dispatch(startCreate()),
+    cancelCreate: () => dispatch(stopCreate()),
+    beginEdit: id => dispatch(startEdit(id)),
+    cancelEdit: () => dispatch(stopEdit()),
+    deleteContact: id => dispatch(deleteContact(id)),
+    fetchContacts: options => dispatch(fetchContacts(options))
   }
 }
 
@@ -69,6 +70,12 @@ class ClientDetails extends React.Component {
     }
 
     this.props.addContact(contactToAdd)
+  }
+
+  componentDidMount() {
+    this.props.fetchContacts({
+      clientId: this.props.selectClient.id
+    })
   }
 
   render() {

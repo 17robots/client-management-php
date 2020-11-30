@@ -41,7 +41,27 @@ class ClientPage extends React.Component {
   }
 
   addClient = () => {
+    const clientToAdd = {
+      creatorid: this.context.userId,
+      clientname: this.nameEl.current.value,
+      clientaddress: this.addressEl.current.value,
+      clientphone: this.phoneEl.current.value,
+      clientemail: this.emailEl.current.value
+    }
 
+    this.props.addClient(clientToAdd)
+  }
+
+  editClient = () => {
+    const clientToAdd = {
+      creatorid: this.context.userId,
+      clientname: this.nameEl.current.value,
+      clientaddress: this.addressEl.current.value,
+      clientphone: this.phoneEl.current.value,
+      clientemail: this.emailEl.current.value
+    }
+
+    this.props.editClient(clientToAdd)
   }
 
   componentDidMount() {
@@ -51,7 +71,7 @@ class ClientPage extends React.Component {
   render() {
     return (
       <div>
-        {this.props.isCreating || this.props.isEditing && <Backdrop />}
+        {(this.props.isCreating || this.props.isEditing) && <Backdrop />}
         {
           this.props.isCreating &&
           <Modal
@@ -77,6 +97,35 @@ class ClientPage extends React.Component {
               <div className="form-control">
                 <label htmlFor="lastname">Client Address</label>
                 <input type="phone" id="phone" ref={this.addressEl} required />
+              </div>
+            </form>
+          </Modal>
+        }
+        {
+          (this.props.isEditing && this.props.selectedClient) &&
+          <Modal
+            tite="Edit Client"
+            canCancel
+            canConfirm
+            onCancel={this.props.stopCreate}
+            onConfirm={this.addClient}
+            confirmText="Add Client"
+          >
+            <form>
+              <div className="form-control">
+                <label htmlFor="clientname">Client Name</label>
+                <input type="text" id="firstname" defaultValue={this.props.selectClient.name} ref={this.nameEl} required />
+
+                <label htmlFor="clientphone">Client Phone</label>
+                <input type="phone" id="clientphone" defaultValue={this.props.selectClient.phone} ref={this.phoneEl} required />
+              </div>
+              <div className="form-control">
+                <label htmlFor="email">Client Email</label>
+                <input type="email" id="email" defaultValue={this.props.selectClient.email} ref={this.emailEl} required />
+              </div>
+              <div className="form-control">
+                <label htmlFor="lastname">Client Address</label>
+                <input type="phone" id="phone" defaultValue={this.props.selectClient.address} ref={this.addressEl} required />
               </div>
             </form>
           </Modal>
